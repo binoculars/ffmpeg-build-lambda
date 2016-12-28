@@ -1,6 +1,6 @@
 language: c
 compiler: gcc
-script: travis_wait ./build.sh
+script: ./build.sh
 dist: trusty
 sudo: false
 addons:
