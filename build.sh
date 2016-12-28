@@ -2,18 +2,18 @@
 
 export ROOT=`pwd`
 
-sudo apt-get update
-sudo apt-get -y install \
-	libass-dev \
-	libfdk-aac-dev \
-	libmp3lame-dev \
-	libopus-dev \
-	libtheora-dev \
-	libvorbis-dev \
-	libx264-dev \
-	libxvidcore-dev \
-	texinfo \
-	yasm
+#sudo apt-get update
+#sudo apt-get -y install \
+#	libass-dev \
+#	libfdk-aac-dev \
+#	libmp3lame-dev \
+#	libopus-dev \
+#	libtheora-dev \
+#	libvorbis-dev \
+#	libx264-dev \
+#	libxvidcore-dev \
+#	texinfo \
+#	yasm
 
 # libx265
 echo "Building libx265"
