@@ -11,6 +11,7 @@ sudo apt-get -y install \
 	libtheora-dev \
 	libvorbis-dev \
 	libx264-dev \
+	libxvidcore-dev \
 	texinfo \
 	yasm
 
