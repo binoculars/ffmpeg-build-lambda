@@ -1,12 +1,10 @@
 language: c
 compiler: gcc
-script: ./build.sh
+script: travis_wait ./build.sh
 dist: trusty
 sudo: false
 addons:
   apt:
-    sources:
-#    - debian-sid
     packages:
     - libass-dev
     - libfdk-aac-dev
