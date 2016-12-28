@@ -6,7 +6,7 @@ sudo: false
 addons:
   apt:
     sources:
-    - debian-sid
+#    - debian-sid
     packages:
     - libass-dev
     - libfdk-aac-dev
