@@ -2,6 +2,8 @@
 
 export ROOT=`pwd`
 
+export sep='\n~ *'$___{1..85} '~'
+
 #sudo apt-get update
 #sudo apt-get -y install \
 #	libass-dev \
@@ -16,7 +18,7 @@ export ROOT=`pwd`
 #	yasm
 
 # libx265
-echo "Building libx265"
+echo "Building libx265" $sep
 cd $ROOT/x265/build/linux
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
 make
@@ -24,14 +26,14 @@ make install
 make distclean
 
 # libvpx
-echo "Building libvpx"
+echo "Building libvpx" $sep
 cd $ROOT/libvpx
 PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests
 PATH="$HOME/bin:$PATH" make
 make install
 make clean
 
-echo "Building ffmpeg"
+echo "Building ffmpeg" $sep
 cd $ROOT/ffmpeg
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
 	--prefix="$HOME/ffmpeg_build" \
@@ -64,3 +66,8 @@ PATH="$HOME/bin:$PATH" make
 make install
 make distclean
 hash -r
+
+echo "bin dir contents" $sep
+ls -al $HOME/bin
+echo "build dir contents" $sep
+tree $HOME/ffmpeg_build
