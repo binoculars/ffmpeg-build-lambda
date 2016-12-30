@@ -1,24 +1,54 @@
 #!/usr/bin/env bash
 
-export ROOT=`pwd`
 
-export sep='\n~ *'$___{1..85} '~'
+ROOT=`pwd`
 
-#sudo apt-get update
-#sudo apt-get -y install \
-#	libass-dev \
-#	libfdk-aac-dev \
-#	libmp3lame-dev \
-#	libopus-dev \
-#	libtheora-dev \
-#	libvorbis-dev \
-#	libx264-dev \
-#	libxvidcore-dev \
-#	texinfo \
-#	yasm
+if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then
+	TODAY=`date -u +%F`
+
+	if [ -z $(git status -s) ]; then
+		git commit -am "Update to latest master on all for $TODAY"
+		git push origin master
+	fi
+
+	# Tag the nightly release
+	git tag -a "nightly-$TODAY" -m "Nightly build for $TODAY"
+
+	function latest_tag() {
+		git describe --tags "`git rev-list HEAD --not --tags='nightly*' --max-count=1`"
+	}
+
+	# If the
+	git fetch --tags origin
+	MAIN_LATEST_TAG=`latest-tag`
+	git submodule foreach 'git fetch --tags origin'
+
+	cd $ROOT/ffmpeg
+	git FFMPEG_LATEST_TAG=`latest-tag`
+
+	cd $ROOT
+
+	if [ $MAIN_LATEST_TAG != $FFMPEG_LATEST_TAG ]; then
+		git checkout -b release/$FFMPEG_LATEST_TAG
+		git submodule foreach 'git checkout $(git describe --tags $(git rev-list --tags --max-count=1))'
+		MSG="Release for FFmpeg $FFMPEG_LATEST_TAG"$'\n'`git submodule foreach --quiet 'echo "$name: $(git describe --tags)"'`
+		git commit -am "${MSG[@]}"
+		git tag -a $FFMPEG_LATEST_TAG -m "${MSG[@]}"
+	fi
+
+	git push --tags origin
+
+	exit 0
+fi
+
+# Don't build master, since it will only contain the latest nightly commits.
+if [ "$TRAVIS_BRANCH" == "master" ]; then
+	echo "Just keeping things up-to-date"
+	exit 0;
+fi
 
 # libx265
-echo "Building libx265" $sep
+echo "Building libx265"
 cd $ROOT/x265/build/linux
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
 make
@@ -26,14 +56,14 @@ make install
 make distclean
 
 # libvpx
-echo "Building libvpx" $sep
+echo "Building libvpx"
 cd $ROOT/libvpx
 PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests
 PATH="$HOME/bin:$PATH" make
 make install
 make clean
 
-echo "Building ffmpeg" $sep
+echo "Building FFmpeg"
 cd $ROOT/ffmpeg
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
 	--prefix="$HOME/ffmpeg_build" \
@@ -43,7 +73,6 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--bindir="$HOME/bin" \
 	--arch="x86_64" \
 	--enable-gpl \
-	--enable-nonfree \
 	--disable-runtime-cpudetect \
 	--disable-ffplay \
 	--disable-ffserver \
@@ -58,16 +87,23 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libvpx \
 	--enable-libx264 \
 	--enable-libx265 \
-	--enable-libxvid \
-	--disable-cuda \
-	--disable-cuvid \
-	--disable-nvenc
+	--enable-libxvid
 PATH="$HOME/bin:$PATH" make
 make install
 make distclean
 hash -r
 
-echo "bin dir contents" $sep
-ls -al $HOME/bin
-echo "build dir contents" $sep
-tree $HOME/ffmpeg_build
+# Generate README.txt
+echo "Generating README"
+echo "
+`figlet -f slant "FFmpeg"`
+
+Build version: $TRAVIS_TAG
+Build date: `date -u`
+
+`$HOME/bin/ffmpeg -version`
+
+This build of FFmpeg is licensed under the GPL. See the source code for details.
+" > $HOME/bin/README.txt
+
+tar -czvf $TRAVIS_BUILD_DIR/ffmpeg-build-lambda.tar.gz $HOME/bin/*
