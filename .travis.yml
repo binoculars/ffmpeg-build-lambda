@@ -1,9 +1,11 @@
 language: c
 cache: ccache
 compiler: gcc
-script: ./build.sh
 dist: trusty
 sudo: false
+env:
+  global:
+  - COMMIT_AUTHOR_EMAIL: "barrett.harber@gmail.com"
 addons:
   apt:
     packages:
@@ -17,6 +19,11 @@ addons:
     - libxvidcore-dev
     - texinfo
     - yasm
+before_install:
+- openssl aes-256-cbc -K $encrypted_db3a50dc7bb3_key -iv $encrypted_db3a50dc7bb3_iv -in deploy_key.enc -out deploy_key -d
+- git config user.name "Travis CI"
+- git config user.email "$COMMIT_AUTHOR_EMAIL"
+script: ./build.sh
 deploy:
   provider: releases
   api_key:

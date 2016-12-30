@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
 
-
+set -e
 ROOT=`pwd`
 
-if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then
+if [ "$TRAVIS_EVENT_TYPE" == 'cron' ]; then
+	REPO=`git config remote.origin.url`
+	SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
+	chmod 600 deploy_key
+	eval `ssh-agent -s`
+	ssh-add deploy_key
+
 	TODAY=`date -u +%F`
+
+	git submodule foreach 'git checkout master && git fetch origin master --tags && git pull'
 
 	if [ -z $(git status -s) ]; then
 		git commit -am "Update to latest master on all for $TODAY"
-		git push origin master
 	fi
 
 	# Tag the nightly release
@@ -18,10 +25,9 @@ if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then
 		git describe --tags "`git rev-list HEAD --not --tags='nightly*' --max-count=1`"
 	}
 
-	# If the
-	git fetch --tags origin
+	# If the FFmpeg repo has a newer tag, create a tag for this repo and push
+	git fetch $SSH_REPO --tags
 	MAIN_LATEST_TAG=`latest-tag`
-	git submodule foreach 'git fetch --tags origin'
 
 	cd $ROOT/ffmpeg
 	git FFMPEG_LATEST_TAG=`latest-tag`
@@ -36,7 +42,7 @@ if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then
 		git tag -a $FFMPEG_LATEST_TAG -m "${MSG[@]}"
 	fi
 
-	git push --tags origin
+	git push $SSH_REPO master --tags
 
 	exit 0
 fi
