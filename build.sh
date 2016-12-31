@@ -3,7 +3,8 @@
 set -e
 ROOT=`pwd`
 
-if [ "$TRAVIS_EVENT_TYPE" == 'cron' ]; then
+
+if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` == *'[cron debug]'* ]]; then
 	REPO=`git config remote.origin.url`
 	SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 	chmod 600 deploy_key
@@ -14,7 +15,7 @@ if [ "$TRAVIS_EVENT_TYPE" == 'cron' ]; then
 
 	git submodule foreach 'git checkout master && git fetch origin master --tags && git pull'
 
-	if [ -z $(git status -s) ]; then
+	if [[ -n `git status -s` ]]; then
 		git commit -am "Update to latest master on all for $TODAY"
 	fi
 
