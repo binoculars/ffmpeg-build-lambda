@@ -27,10 +27,10 @@ if [ "$TRAVIS_EVENT_TYPE" == 'cron' ]; then
 
 	# If the FFmpeg repo has a newer tag, create a tag for this repo and push
 	git fetch $SSH_REPO --tags
-	MAIN_LATEST_TAG=`latest-tag`
+	MAIN_LATEST_TAG=`latest_tag`
 
 	cd $ROOT/ffmpeg
-	git FFMPEG_LATEST_TAG=`latest-tag`
+	git FFMPEG_LATEST_TAG=`latest_tag`
 
 	cd $ROOT
 
