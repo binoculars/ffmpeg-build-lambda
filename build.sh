@@ -59,7 +59,6 @@ cd $ROOT/x265/build/linux
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
 make
 make install
-make distclean
 
 # libvpx
 echo "Building libvpx"
