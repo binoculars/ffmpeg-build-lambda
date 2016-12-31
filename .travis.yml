@@ -28,7 +28,7 @@ deploy:
   provider: releases
   api_key:
     secure: RIPh5vyMmcdncCFXAkNgC1EF/JTYqrdN/sEcaTQ3w5ek4/igL/N21hKj5U5EAu1DTWfwdmIZ8Z0VCzz3ktftlDNFl5bWrMpo+D0A2J6Gs/neOxZYDRubB03WnB+fuQamshgeb32Mng1r3pudxAp3zlGTYhpYNy1u4bPShjtF7SdEqM0TxgV4Xv4zjq57xYovXUQippqEIokgYLt/pHZZ1lOvYuQbCK/s87QXemc4T5crM65TfCO+gooftQJs5aybmtdztkbnG40kHbuQzGopKb1kO4VTEEOmkADs+YMMuoCaivAiPTeF5dhmiBZsksJJfghfETs3hqb5I/bh0t5cBnMiLYPOussObQ7Y3f/rs8SEDM4gfAE6ATApOZfCKdQHK1KIbgesybt1Y29lSwnk3737kLgrPUnB2eq8h2eZjKex1BV5nCUYipbRaqvw3JDMPaerK7Cx4UWJkme0sc6D/TQxAqCyRWuEyK04qASui0ezpy06qTLuWd81kHbm7NgXdawyTtwsF99zf7ixiU6ymPJKw43O5puTHmRsUphfkgyc+48dIWMvZjSWhHDGyLs963dlc7isx65t8Y/ELbZrtNSpzJTBX21ibfTa04dBrYGyGGe/4EAylcalQYy0+WPIUjsZ8PBu0Yzn+ymBfcOV84voE5UcHMf4TnQ1OicjZWA=
-  file: file.tar.gz
+  file: ffmpeg-build-lambda.tar.gz
   skip_cleanup: true
   on:
     tags: true
