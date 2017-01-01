@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ev
 ROOT=`pwd`
 
 if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` == *'[cron debug]'* ]]; then
@@ -21,18 +21,21 @@ if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` 
 	fi
 
 	# Gather tags latest non-nightly tags for the main repo and FFmpeg submodule
-	MAIN_LATEST_TAG=`git tag --sort=-taggerdate | grep -v "nightly*" | head -1`
+	MAIN_LATEST_TAG=`git tag | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | awk '{print $4}' | grep -v "nightly*" | head -1`
 	cd ffmpeg
-	FFMPEG_LATEST_TAG=`git tag --sort=-taggerdate | head -1`
+	FFMPEG_LATEST_TAG=`git tag | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | awk '{print $4}' | head -1`
 	cd ..
 
 	# Tag the nightly release
-	git tag -a "nightly-$TODAY" -m "Nightly build for $TODAY"
+	TAG_NAME_TODAY="nightly-$TODAY"
+	if ! git rev-parse -q --verify "refs/tags/$TAG_NAME_TODAY" >/dev/null; then
+		git tag -a "$TAG_NAME_TODAY" -m "Nightly build for $TODAY"
+	fi
 
 	# If the FFmpeg repo has a newer tag, create a tag for this repo
 	if [ "$MAIN_LATEST_TAG" != "$FFMPEG_LATEST_TAG" ]; then
 		git checkout -b "release/$FFMPEG_LATEST_TAG"
-		git submodule foreach 'git checkout $(git tag --sort=-taggerdate | head -1)'
+		git submodule foreach $'git checkout $(git tag | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | awk \'{print $4}\' | head -1)'
 		MSG="Release for FFmpeg $FFMPEG_LATEST_TAG"$'\n'`git submodule foreach --quiet 'echo "$name: $(git describe --tags --abbrev=0)"'`
 		git commit -am "${MSG[@]}"
 		git tag -a "$FFMPEG_LATEST_TAG" -m "${MSG[@]}"
