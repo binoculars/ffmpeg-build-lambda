@@ -33,7 +33,7 @@ if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` 
 	fi
 
 	# If the FFmpeg repo has a newer tag, create a tag for this repo
-	if [ "$MAIN_LATEST_TAG" != "$FFMPEG_LATEST_TAG" ]; then
+	if [ "$MAIN_LATEST_TAG" != "$FFMPEG_LATEST_TAG" ] && ! git rev-parse -q --verify "refs/tags/$MAIN_LATEST_TAG" >/dev/null; then
 		git checkout -b "release/$FFMPEG_LATEST_TAG"
 		git submodule foreach $'git checkout $(git tag | xargs -I@ git log --format=format:"%ai @%n" -1 @ | sort -r | awk \'{print $4}\' | head -1)'
 		MSG="Release for FFmpeg $FFMPEG_LATEST_TAG"$'\n'`git submodule foreach --quiet 'echo "$name: $(git describe --tags --abbrev=0)"'`
@@ -54,21 +54,18 @@ if [ "$TRAVIS_BRANCH" == "master" ]; then
 fi
 
 # libx265
-echo "Building libx265"
 cd "$ROOT/x265/build/linux"
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
 make
 make install
 
 # libvpx
-echo "Building libvpx"
 cd "$ROOT/libvpx"
 PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests
 PATH="$HOME/bin:$PATH" make
 make install
 make clean
 
-echo "Building FFmpeg"
 cd "$ROOT/ffmpeg"
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
 	--prefix="$HOME/ffmpeg_build" \
@@ -98,7 +95,6 @@ make distclean
 hash -r
 
 # Generate README.txt
-echo "Generating README"
 echo "
 `figlet -f slant "FFmpeg"`
 
