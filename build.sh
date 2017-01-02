@@ -106,4 +106,4 @@ Build date: `date -u`
 This build of FFmpeg is licensed under the GPL. See the source code for details.
 " > "$HOME/bin/README.txt"
 
-tar -czvf "$TRAVIS_BUILD_DIR/ffmpeg-build-lambda.tar.gz" $HOME/bin/*
+tar -czvf "$TRAVIS_BUILD_DIR/ffmpeg-build-lambda.tar.gz" -C $HOME/bin/ .
