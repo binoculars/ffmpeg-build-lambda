@@ -10,7 +10,7 @@ dependencies are licensed separately. In the current configuration, Specific bui
 Modification of the build script may result in unredistributable binaries. Please be mindful of this when forking.
 
 ## Releases
-Check the [releases](./releases/) page for available builds
+Check the [releases](https://github.com/binoculars/ffmpeg-build-lambda/releases) page for available builds
 * Nightly releases are built from the master branches of each of the submodules
 * Versioned releases are built when there is a new tag from FFmpeg and the latest tags from libvpx and x265 are used
 
