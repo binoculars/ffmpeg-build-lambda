@@ -75,20 +75,44 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--bindir="$HOME/bin" \
 	--arch="x86_64" \
 	--enable-gpl \
+	--enable-version3 \
+	--enable-static \
+	--disable-debug \
 	--disable-runtime-cpudetect \
 	--disable-ffplay \
 	--disable-ffserver \
 	--disable-doc \
 	--disable-network \
+	--disable-devices \
 	--disable-protocols \
 	--enable-protocol=file \
 	--enable-protocol=pipe \
 	--enable-protocol=tee \
 	--enable-libmp3lame \
 	--enable-libvpx \
+	--enable-libwebp \
 	--enable-libx264 \
 	--enable-libx265 \
-	--enable-libxvid
+	--enable-libxvid \
+	--enable-fontconfig \
+	--enable-frei0r \
+	--enable-gray \
+	--enable-libass \
+	--enable-libfreetype \
+	--enable-libfribidi \
+	--enable-libmp3lame \
+	--enable-libopencore-amrnb \
+	--enable-libopencore-amrwb \
+	--enable-libopenjpeg \
+	--enable-libopus \
+	--enable-librtmp \
+	--enable-libsoxr \
+	--enable-libspeex \
+	--enable-libtheora \
+	--enable-libvidstab \
+	--enable-libvo-amrwbenc \
+	--enable-libvorbis \
+	--enable-libzimg
 PATH="$HOME/bin:$PATH" make
 make install
 make distclean
