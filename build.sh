@@ -109,8 +109,7 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libspeex \
 	--enable-libtheora \
 	--enable-libvo-amrwbenc \
-	--enable-libvorbis \
-	--enable-libzimg
+	--enable-libvorbis
 PATH="$HOME/bin:$PATH" make
 make install
 make distclean
