@@ -70,13 +70,14 @@ cd "$ROOT/ffmpeg"
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
 	--prefix="$HOME/ffmpeg_build" \
 	--pkg-config-flags="--static" \
-	--extra-cflags="-I$HOME/ffmpeg_build/include" \
-	--extra-ldflags="-L$HOME/ffmpeg_build/lib" \
+	--extra-cflags="-I$HOME/ffmpeg_build/include -static" \
+	--extra-ldflags="-L$HOME/ffmpeg_build/lib -static" \
 	--bindir="$HOME/bin" \
 	--arch="x86_64" \
 	--enable-gpl \
 	--enable-version3 \
 	--enable-static \
+	--disable-shared \
 	--disable-debug \
 	--disable-runtime-cpudetect \
 	--disable-ffplay \
