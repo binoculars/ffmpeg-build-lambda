@@ -98,7 +98,6 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-fontconfig \
 	--enable-frei0r \
 	--enable-gray \
-	--enable-libass \
 	--enable-libfreetype \
 	--enable-libfribidi \
 	--enable-libmp3lame \

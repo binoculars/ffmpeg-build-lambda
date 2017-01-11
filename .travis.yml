@@ -11,7 +11,7 @@ addons:
     packages:
     - figlet
     - frei0r-plugins-dev
-    - libass-dev
+    #- libass-dev
     - libfribidi-dev
     - libmp3lame-dev
     - libopencore-amrnb-dev
