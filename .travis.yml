@@ -10,11 +10,21 @@ addons:
   apt:
     packages:
     - figlet
+    - frei0r-plugins-dev
     - libass-dev
+    - libfribidi-dev
     - libmp3lame-dev
+    - libopencore-amrnb-dev
+    - libopencore-amrwb-dev
+    - libopenjpeg-dev
     - libopus-dev
+    - libsoxr-dev
+    - libspeex-dev
+    - librtmp-dev
     - libtheora-dev
     - libvorbis-dev
+    - libvo-amrwbenc-dev
+    - libwebp-dev
     - libx264-dev
     - libxvidcore-dev
     - texinfo

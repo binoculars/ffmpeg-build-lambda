@@ -109,7 +109,6 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libsoxr \
 	--enable-libspeex \
 	--enable-libtheora \
-	--enable-libvidstab \
 	--enable-libvo-amrwbenc \
 	--enable-libvorbis \
 	--enable-libzimg
