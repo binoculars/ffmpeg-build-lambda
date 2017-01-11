@@ -95,21 +95,21 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libx264 \
 	--enable-libx265 \
 	--enable-libxvid \
-	--enable-fontconfig \
-	--enable-frei0r \
-	--enable-gray \
-	--enable-libfreetype \
-	--enable-libfribidi \
-	--enable-libmp3lame \
-	--enable-libopencore-amrnb \
-	--enable-libopencore-amrwb \
-	--enable-libopenjpeg \
-	--enable-libopus \
-	--enable-libsoxr \
-	--enable-libspeex \
-	--enable-libtheora \
-	--enable-libvo-amrwbenc \
-	--enable-libvorbis
+#	--enable-fontconfig \
+#	--enable-frei0r \
+#	--enable-gray \
+#	--enable-libfreetype \
+#	--enable-libfribidi \
+#	--enable-libmp3lame \
+#	--enable-libopencore-amrnb \
+#	--enable-libopencore-amrwb \
+#	--enable-libopenjpeg \
+#	--enable-libopus \
+#	--enable-libsoxr \
+#	--enable-libspeex \
+#	--enable-libtheora \
+#	--enable-libvo-amrwbenc \
+#	--enable-libvorbis
 PATH="$HOME/bin:$PATH" make
 make install
 make distclean
