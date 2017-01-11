@@ -20,7 +20,6 @@ addons:
     - libopus-dev
     - libsoxr-dev
     - libspeex-dev
-    - librtmp-dev
     - libtheora-dev
     - libvorbis-dev
     - libvo-amrwbenc-dev

@@ -105,7 +105,6 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libopencore-amrwb \
 	--enable-libopenjpeg \
 	--enable-libopus \
-	--enable-librtmp \
 	--enable-libsoxr \
 	--enable-libspeex \
 	--enable-libtheora \
