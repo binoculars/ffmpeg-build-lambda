@@ -2,6 +2,7 @@
 
 set -ev
 ROOT=`pwd`
+NUM_CORES=2
 
 if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` == *'[cron debug]'* ]]; then
 	REPO=`git config remote.origin.url`
@@ -56,13 +57,13 @@ fi
 # libx265
 cd "$ROOT/x265/build/linux"
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
-make
+make -j "$NUM_CORES"
 make install
 
 # libvpx
 cd "$ROOT/libvpx"
 PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests
-PATH="$HOME/bin:$PATH" make
+PATH="$HOME/bin:$PATH" make -j "$NUM_CORES"
 make install
 make clean
 
@@ -76,8 +77,8 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--arch="x86_64" \
 	--enable-gpl \
 	--enable-version3 \
-	--enable-static \
 	--disable-shared \
+	--enable-static \
 	--disable-debug \
 	--disable-runtime-cpudetect \
 	--disable-ffplay \
@@ -94,7 +95,7 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libwebp \
 	--enable-libx264 \
 	--enable-libx265 \
-	--enable-libxvid \
+	--enable-libxvid
 #	--enable-fontconfig \
 #	--enable-frei0r \
 #	--enable-gray \
@@ -110,7 +111,7 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 #	--enable-libtheora \
 #	--enable-libvo-amrwbenc \
 #	--enable-libvorbis
-PATH="$HOME/bin:$PATH" make
+PATH="$HOME/bin:$PATH" make -j "$NUM_CORES"
 make install
 make distclean
 hash -r
