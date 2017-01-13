@@ -95,9 +95,10 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libwebp \
 	--enable-libx264 \
 	--enable-libx265 \
-	--enable-libxvid
+	--enable-libxvid \
+	--enable-frei0r \
+	--enable-libopus \
 #	--enable-fontconfig \
-#	--enable-frei0r \
 #	--enable-gray \
 #	--enable-libfreetype \
 #	--enable-libfribidi \
@@ -105,7 +106,6 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 #	--enable-libopencore-amrnb \
 #	--enable-libopencore-amrwb \
 #	--enable-libopenjpeg \
-#	--enable-libopus \
 #	--enable-libsoxr \
 #	--enable-libspeex \
 #	--enable-libtheora \
