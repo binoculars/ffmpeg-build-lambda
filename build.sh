@@ -98,19 +98,19 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libxvid \
 	--enable-frei0r \
 	--enable-libopus \
-#	--enable-fontconfig \
-#	--enable-gray \
-#	--enable-libfreetype \
-#	--enable-libfribidi \
-#	--enable-libmp3lame \
-#	--enable-libopencore-amrnb \
-#	--enable-libopencore-amrwb \
-#	--enable-libopenjpeg \
-#	--enable-libsoxr \
-#	--enable-libspeex \
-#	--enable-libtheora \
-#	--enable-libvo-amrwbenc \
-#	--enable-libvorbis
+	--enable-fontconfig \
+	--enable-gray \
+	--enable-libfreetype \
+	--enable-libfribidi \
+	--enable-libmp3lame \
+	--enable-libopencore-amrnb \
+	--enable-libopencore-amrwb \
+	--enable-libopenjpeg \
+	--enable-libsoxr \
+	--enable-libspeex \
+	--enable-libtheora \
+	--enable-libvo-amrwbenc \
+	--enable-libvorbis
 PATH="$HOME/bin:$PATH" make -j "$NUM_CORES"
 make install
 make distclean
