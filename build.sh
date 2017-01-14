@@ -74,7 +74,7 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--extra-cflags="-I$HOME/ffmpeg_build/include -static" \
 	--extra-ldflags="-L$HOME/ffmpeg_build/lib -static" \
 	--bindir="$HOME/bin" \
-	--arch="x86_64" \
+	--cc="$CC -m64" \
 	--enable-gpl \
 	--enable-version3 \
 	--disable-shared \
