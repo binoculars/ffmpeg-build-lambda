@@ -2,6 +2,7 @@
 
 set -ev
 ROOT=`pwd`
+NUM_CORES=2
 
 if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` == *'[cron debug]'* ]]; then
 	REPO=`git config remote.origin.url`
@@ -56,13 +57,13 @@ fi
 # libx265
 cd "$ROOT/x265/build/linux"
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
-make
+make -j "$NUM_CORES"
 make install
 
 # libvpx
 cd "$ROOT/libvpx"
 PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests
-PATH="$HOME/bin:$PATH" make
+PATH="$HOME/bin:$PATH" make -j "$NUM_CORES"
 make install
 make clean
 
@@ -70,12 +71,15 @@ cd "$ROOT/ffmpeg"
 PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
 	--prefix="$HOME/ffmpeg_build" \
 	--pkg-config-flags="--static" \
-	--extra-cflags="-I$HOME/ffmpeg_build/include" \
-	--extra-ldflags="-L$HOME/ffmpeg_build/lib" \
+	--extra-cflags="-I$HOME/ffmpeg_build/include -static" \
+	--extra-ldflags="-L$HOME/ffmpeg_build/lib -static" \
 	--bindir="$HOME/bin" \
-	--arch="x86_64" \
+	--cc="$CC -m64" \
+	--cpu="sandybridge" \
+	--arch="x84_64" \
 	--enable-gpl \
 	--enable-version3 \
+	--disable-shared \
 	--enable-static \
 	--disable-debug \
 	--disable-runtime-cpudetect \
@@ -94,26 +98,22 @@ PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./conf
 	--enable-libx264 \
 	--enable-libx265 \
 	--enable-libxvid \
-	--enable-fontconfig \
 	--enable-frei0r \
+	--enable-libopus \
+	--enable-fontconfig \
 	--enable-gray \
-	--enable-libass \
 	--enable-libfreetype \
-	--enable-libfribidi \
 	--enable-libmp3lame \
 	--enable-libopencore-amrnb \
 	--enable-libopencore-amrwb \
 	--enable-libopenjpeg \
-	--enable-libopus \
-	--enable-librtmp \
-	--enable-libsoxr \
 	--enable-libspeex \
 	--enable-libtheora \
-	--enable-libvidstab \
 	--enable-libvo-amrwbenc \
-	--enable-libvorbis \
-	--enable-libzimg
-PATH="$HOME/bin:$PATH" make
+	--enable-libvorbis
+	#--enable-libsoxr \
+	#--enable-libfribidi \
+PATH="$HOME/bin:$PATH" make -j "$NUM_CORES"
 make install
 make distclean
 hash -r
