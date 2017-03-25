@@ -6,7 +6,7 @@
 
 ## License
 All of the code solely contained in this repository is licensed under the Unlicense. Each of the git submodules and
-dependencies are licensed separately. In the current configuration, Specific builds of FFmpeg are licensed under the GPL.
+dependencies are licensed separately. In the current configuration, Specific builds of FFmpeg are licensed under the GPLv3.
 Modification of the build script may result in unredistributable binaries. Please be mindful of this when forking.
 
 ## Releases
