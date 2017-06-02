@@ -48,12 +48,6 @@ if [[ "$TRAVIS_EVENT_TYPE" == 'cron' ]] || [[ `git --no-pager log -1 --oneline` 
 	exit 0;
 fi
 
-# Don't build master, since it will only contain the latest nightly commits.
-if [ "$TRAVIS_BRANCH" == "master" ]; then
-	echo "Skipping build for 'master' branch... Just keeping things up-to-date"
-	exit 0;
-fi
-
 # libx265
 cd "$ROOT/x265/build/linux"
 PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED:bool=off ../../source
@@ -83,6 +77,7 @@ args=(
 	--enable-protocol=file
 	--enable-protocol=pipe
 	--enable-protocol=tee
+	--enable-protocol=http
 
 	# Libraries
 	--enable-libmp3lame
