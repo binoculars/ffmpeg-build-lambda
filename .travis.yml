@@ -2,10 +2,7 @@ language: c
 cache: ccache
 compiler: gcc
 dist: trusty
-sudo: required
-env:
-  global:
-  - COMMIT_AUTHOR_EMAIL: "barrett.harber@gmail.com"
+sudo: false
 addons:
   apt:
     packages:
@@ -33,7 +30,7 @@ script: ./build.sh
 deploy:
   provider: releases
   api_key:
-    secure: RIPh5vyMmcdncCFXAkNgC1EF/JTYqrdN/sEcaTQ3w5ek4/igL/N21hKj5U5EAu1DTWfwdmIZ8Z0VCzz3ktftlDNFl5bWrMpo+D0A2J6Gs/neOxZYDRubB03WnB+fuQamshgeb32Mng1r3pudxAp3zlGTYhpYNy1u4bPShjtF7SdEqM0TxgV4Xv4zjq57xYovXUQippqEIokgYLt/pHZZ1lOvYuQbCK/s87QXemc4T5crM65TfCO+gooftQJs5aybmtdztkbnG40kHbuQzGopKb1kO4VTEEOmkADs+YMMuoCaivAiPTeF5dhmiBZsksJJfghfETs3hqb5I/bh0t5cBnMiLYPOussObQ7Y3f/rs8SEDM4gfAE6ATApOZfCKdQHK1KIbgesybt1Y29lSwnk3737kLgrPUnB2eq8h2eZjKex1BV5nCUYipbRaqvw3JDMPaerK7Cx4UWJkme0sc6D/TQxAqCyRWuEyK04qASui0ezpy06qTLuWd81kHbm7NgXdawyTtwsF99zf7ixiU6ymPJKw43O5puTHmRsUphfkgyc+48dIWMvZjSWhHDGyLs963dlc7isx65t8Y/ELbZrtNSpzJTBX21ibfTa04dBrYGyGGe/4EAylcalQYy0+WPIUjsZ8PBu0Yzn+ymBfcOV84voE5UcHMf4TnQ1OicjZWA=
+    secure: HAcyIT0r9NSo5jmfPK3ce/U30BGXwKgrz+4f7usrkyJFYHvQW8fHgxIdrkJVEzQfsFtkAkAnELKkK2+F0hMXccuUlWoH7qWxQxmTor2Kl2YVin5V+lqlI4qGyOlJ05eI5MSH+dQ3ktF8szXtxPjTuVPOTjw+DFqLExhxFGLwZRT8J1OvLkgtKYXYO44FG4T3x3MGfRySU6+x5FNPoucKGU7CQNEOssKRRupSgCwjRNmTrtETe+NZRvncSxijDcpND1j63PCOtmyEPuESFzUHj97ogrMPqK1dsplJ2WtsIjLtdShpSx9e18L8Eu3FE/T8AZUlAUDlMRdOjgEqJNgvMAHvnWmqdF2ZLqI8QG4gqh8ijXscCseS5CyU5erB7OgdAbsEelH2seYDj0VoijHpUPke1XCex8IDm5Eh3hb/oj0ag6tnh7tTu8imMItYhZuGncTOxL3f9mEvXYRQnppN677asgnMLfli17wtRvZjn3iT+uKDO1gGifRRS2ldHX2JSQvcdxBw77+/exPkGaR95Q/2l1zwV9fX9P9L/Ung/iSzRFI6pIMQ25khmRn3XTH6rCms5bKD4a8gOdQYAD3gCFWCLScb0Gw63Rnobhlo5W6k9lblqNoBCoWFSlxTkv8coqK6j9i65odtHQU79Nqpf2wZAJmwlZpcEdhQ5PdiLrY=
   file: ffmpeg-build-lambda.tar.gz
   skip_cleanup: true
   on:
