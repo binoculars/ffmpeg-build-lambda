@@ -12,6 +12,7 @@ addons:
     - figlet
     - frei0r-plugins-dev
     #- libass-dev
+    - libfontconfig-dev
     - libfribidi-dev
     - libmp3lame-dev
     - libopencore-amrnb-dev
