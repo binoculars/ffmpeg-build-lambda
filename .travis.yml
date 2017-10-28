@@ -2,7 +2,7 @@ language: c
 cache: ccache
 compiler: gcc
 dist: trusty
-sudo: required
+sudo: false
 env:
   global:
   - COMMIT_AUTHOR_EMAIL: "barrett.harber@gmail.com"
