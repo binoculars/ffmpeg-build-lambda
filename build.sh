@@ -44,15 +44,12 @@ sudo apt-get -y install \
 DOCKER_TAG="${QUAY_REPO}:lambda"
 
 # Build the image
-docker pull "${DOCKER_TAG}-build" || true
-
 docker build \
-	--cache-from "${DOCKER_TAG}-build" \
-	--pull \
 	--tag "${DOCKER_TAG}-build" \
 	--target build \
 	.
 
+# Make a dist image (multi-stage)
 docker build \
 	--cache-from "${DOCKER_TAG}-build" \
 	--tag "${DOCKER_TAG}-dist" \
