@@ -1,10 +1,15 @@
-FROM debian AS build
+FROM debian:stretch AS build
 
 ARG NUM_CORES=2
 
 ENV \
 	PREFIX="/tmp/ffmpeg_build" \
-	PKG_CONFIG_PATH="/tmp/ffmpeg_build/lib/pkgconfig"
+	PKG_CONFIG_PATH="/tmp/ffmpeg_build/lib/pkgconfig" \
+	OPENJPEG_VERSION="2.3.1" \
+	VIDEOLAN_X265_VERSION="3.1.2" \
+	FRIBIDI_VERSION="0.19.7" \
+	FDK_AAC_VERSION="2.0.0" \
+	FFMPEG_VERSION="4.2.1"
 
 # Dependencies
 RUN apt-get update -qq \
@@ -44,6 +49,7 @@ RUN apt-get update -qq \
 		libvo-amrwbenc-dev \
 		libwebp-dev \
 		libx264-dev \
+		libx265-dev \
 		libnuma-dev \
 		libvpx-dev \
 		libxvidcore-dev \
@@ -56,24 +62,18 @@ RUN apt-get update -qq \
 WORKDIR /tmp
 
 # openjpeg
-RUN git clone https://github.com/uclouvain/openjpeg.git --branch master --single-branch \
-	&& cd openjpeg \
+RUN wget https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.gz -O openjpeg.tar.gz \
+	&& tar xzvf openjpeg.tar.gz \
+	&& cd openjpeg-${OPENJPEG_VERSION} \
 	&& cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . \
 	&& make -j "${NUM_CORES}" \
 	&& make install \
 	&& make clean
 
-# libx265
-RUN git clone https://github.com/videolan/x265.git --branch master --single-branch \
-	&& cd ./x265/build/linux \
-	&& cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DENABLE_SHARED:bool=off ../../source \
-	&& make -j "${NUM_CORES}" \
-	&& make install \
-	&& make clean
-
 # fribidi
-RUN git clone https://github.com/fribidi/fribidi.git --branch master --single-branch \
-	&& cd fribidi \
+RUN wget https://github.com/fribidi/fribidi/archive/${FRIBIDI_VERSION}.tar.gz -O fribidi.tar.gz \
+	&& tar xzvf fribidi.tar.gz \
+	&& cd fribidi-${FRIBIDI_VERSION} \
 	&& sed -i 's/^SUBDIRS =.*/SUBDIRS=gen.tab charset lib/' Makefile.am \
 	&& ./bootstrap --no-config \
 	&& ./configure -prefix="${PREFIX}" --enable-static=yes --enable-shared=no \
@@ -91,14 +91,23 @@ RUN git clone https://git.code.sf.net/p/soxr/code soxr --branch master --single-
 	&& make install \
 	&& make clean
 
+
+RUN wget https://github.com/videolan/x265/archive/${VIDEOLAN_X265_VERSION}.tar.gz -O x265.tar.gz && \
+	tar xzvf x265.tar.gz && \
+	cd x265-${VIDEOLAN_X265_VERSION}/build/linux && \
+	cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DENABLE_SHARED=off ../../source && \
+	make && \
+	make install
+
 # FFmpeg
 RUN export \
 		BIN_DIR="/opt/ffmpeg/bin" \
 		PATH="${BIN_DIR}:${PATH}" \
-	&& git clone https://github.com/ffmpeg/ffmpeg.git --branch master --single-branch \
-	&& cd ./ffmpeg \
+	&& wget https://github.com/FFmpeg/FFmpeg/archive/n${FFMPEG_VERSION}.tar.gz -O ffmpeg.tar.gz \
+	&& tar xzvf ffmpeg.tar.gz \
+	&& cd ./FFmpeg-n${FFMPEG_VERSION} \
 	&& ./configure \
-		--cc=gcc-6 \
+		--cc=gcc \
 		--prefix="${PREFIX}" \
 		--pkg-config-flags="--static" \
 		--extra-cflags="-I${PREFIX}/include -static" \
@@ -112,7 +121,6 @@ RUN export \
 		--disable-debug \
 		--disable-runtime-cpudetect \
 		--disable-ffplay \
-		--disable-ffserver \
 		--disable-doc \
 		--disable-network \
 		--disable-devices \
@@ -151,12 +159,12 @@ RUN export \
 	; fi \
 	&& make -j "${NUM_CORES}" \
 	&& make install \
-	&& make distclean
+	&& make distclean \
+	&& cp /tmp/FFmpeg-n${FFMPEG_VERSION}/COPYING.GPLv3 /opt/ffmpeg/COPYING.GPLv3
 
 FROM alpine as dist
 
 COPY --from=build /opt/ /opt/
-COPY --from=build /tmp/ffmpeg/COPYING.GPLv3 /opt/ffmpeg/
 
 RUN cd /opt/ffmpeg/bin \
 	&& for file in *; do \
