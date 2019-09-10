@@ -99,6 +99,14 @@ RUN wget https://github.com/videolan/x265/archive/${VIDEOLAN_X265_VERSION}.tar.g
 	make && \
 	make install
 
+RUN wget https://github.com/mstorsjo/fdk-aac/archive/v${FDK_AAC_VERSION}.tar.gz -O fdk-aac.tar.gz && \
+	tar xzvf fdk-aac.tar.gz && \
+	cd fdk-aac-${FDK_AAC_VERSION} && \
+	autoreconf -fiv && \
+	./configure --prefix="${PREFIX}" --disable-shared && \
+	make && \
+	make install
+
 # FFmpeg
 RUN export \
 		BIN_DIR="/opt/ffmpeg/bin" \
@@ -142,12 +150,14 @@ RUN export \
 		--enable-libtheora \
 		--enable-libvorbis \
 		--enable-libfribidi \
+		--enable-libfdk-aac \
 		# # GPL
 		--enable-gpl \
 		--enable-frei0r \
 		--enable-libx264 \
 		--enable-libx265 \
 		--enable-libxvid \
+		--enable-nonfree \
 		# # GPLv3
 		--enable-version3 \
 		--enable-libopencore-amrnb \
