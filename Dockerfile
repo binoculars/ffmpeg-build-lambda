@@ -1,54 +1,57 @@
-FROM debian AS build
+FROM ubuntu:20.04 AS build
 
 ARG NUM_CORES=2
 
 ENV \
 	PREFIX="/tmp/ffmpeg_build" \
-	PKG_CONFIG_PATH="/tmp/ffmpeg_build/lib/pkgconfig"
+	DEBIAN_FRONTEND=noninteractive
 
 # Dependencies
-RUN apt-get update -qq \
+RUN apt-get update \
 	&& apt-get -y install \
 		autoconf \
 		automake \
 		build-essential \
 		cmake \
+		fontconfig \
+		frei0r-plugins-dev \
 		git \
+		git-core \
 		libass-dev \
+		libfdk-aac-dev \
+		libfontconfig1-dev \
 		libfreetype6-dev \
+		libfribidi-dev \
+		libgnutls28-dev \
+		libmp3lame-dev \
+		libnuma-dev \
+		libopencore-amrnb-dev \
+		libopencore-amrwb-dev \
+		libopus-dev \
 		libsdl2-dev \
+		libspeex-dev \
 		libtheora-dev \
 		libtool \
 		libva-dev \
 		libvdpau-dev \
+		libvo-amrwbenc-dev \
 		libvorbis-dev \
-		libxcb1-dev \
+		libvpx-dev \
+		libwebp-dev \
+		libx264-dev \
+		libx265-dev \
 		libxcb-shm0-dev \
 		libxcb-xfixes0-dev \
+		libxcb1-dev \
+		libxvidcore-dev \
 		mercurial \
+		meson \
+		ninja-build \
 		pkg-config \
 		texinfo \
 		wget \
-		zlib1g-dev \
-		fontconfig \
-		frei0r-plugins-dev \
-		libass-dev \
-		libfontconfig1-dev \
-		libmp3lame-dev \
-		libopencore-amrnb-dev \
-		libopencore-amrwb-dev \
-		libopus-dev \
-		libspeex-dev \
-		libtheora-dev \
-		libvorbis-dev \
-		libvo-amrwbenc-dev \
-		libwebp-dev \
-		libx264-dev \
-		libnuma-dev \
-		libvpx-dev \
-		libxvidcore-dev \
-		texinfo \
 		yasm \
+		zlib1g-dev \
 	&& apt-get clean \
 	&& apt-get autoremove -y \
 	&& rm -rf /var/lib/apt/lists/*
@@ -59,24 +62,6 @@ WORKDIR /tmp
 RUN git clone https://github.com/uclouvain/openjpeg.git --branch master --single-branch \
 	&& cd openjpeg \
 	&& cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . \
-	&& make -j "${NUM_CORES}" \
-	&& make install \
-	&& make clean
-
-# libx265
-RUN git clone https://github.com/videolan/x265.git --branch master --single-branch \
-	&& cd ./x265/build/linux \
-	&& cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DENABLE_SHARED:bool=off ../../source \
-	&& make -j "${NUM_CORES}" \
-	&& make install \
-	&& make clean
-
-# fribidi
-RUN git clone https://github.com/fribidi/fribidi.git --branch master --single-branch \
-	&& cd fribidi \
-	&& sed -i 's/^SUBDIRS =.*/SUBDIRS=gen.tab charset lib/' Makefile.am \
-	&& ./bootstrap --no-config \
-	&& ./configure -prefix="${PREFIX}" --enable-static=yes --enable-shared=no \
 	&& make -j "${NUM_CORES}" \
 	&& make install \
 	&& make clean
@@ -92,15 +77,15 @@ RUN git clone https://git.code.sf.net/p/soxr/code soxr --branch master --single-
 	&& make clean
 
 # FFmpeg
+RUN git clone https://github.com/ffmpeg/ffmpeg.git --branch master --single-branch
 RUN export \
 		BIN_DIR="/opt/ffmpeg/bin" \
 		PATH="${BIN_DIR}:${PATH}" \
-	&& git clone https://github.com/ffmpeg/ffmpeg.git --branch master --single-branch \
 	&& cd ./ffmpeg \
 	&& ./configure \
-		--cc=gcc-6 \
+		--cc=gcc \
 		--prefix="${PREFIX}" \
-		--pkg-config-flags="--static" \
+		--pkg-config="pkg-config --static" \
 		--extra-cflags="-I${PREFIX}/include -static" \
 		--extra-ldflags="-L${PREFIX}/lib -static" \
 		--extra-libs="-lpthread -lm" \
@@ -112,7 +97,6 @@ RUN export \
 		--disable-debug \
 		--disable-runtime-cpudetect \
 		--disable-ffplay \
-		--disable-ffserver \
 		--disable-doc \
 		--disable-network \
 		--disable-devices \
