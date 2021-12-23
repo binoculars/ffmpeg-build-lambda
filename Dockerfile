@@ -13,6 +13,7 @@ RUN apt-get update \
 		automake \
 		build-essential \
 		cmake \
+		curl \
 		fontconfig \
 		frei0r-plugins-dev \
 		git \
@@ -27,6 +28,7 @@ RUN apt-get update \
 		libnuma-dev \
 		libopencore-amrnb-dev \
 		libopencore-amrwb-dev \
+		libopenjp2-7-dev \
 		libopus-dev \
 		libsdl2-dev \
 		libspeex-dev \
@@ -58,13 +60,26 @@ RUN apt-get update \
 
 WORKDIR /tmp
 
-# openjpeg
-RUN git clone https://github.com/uclouvain/openjpeg.git --branch master --single-branch \
-	&& cd openjpeg \
-	&& cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . \
-	&& make -j "${NUM_CORES}" \
-	&& make install \
-	&& make clean
+# # openjpeg
+# RUN git clone https://github.com/uclouvain/openjpeg.git --branch master --single-branch \
+# 	&& cd openjpeg \
+# 	&& cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . \
+# 	&& make -j "${NUM_CORES}" \
+# 	&& make install \
+# 	&& make clean
+
+## openjpeg https://github.com/uclouvain/openjpeg
+RUN \
+        DIR=/tmp/openjpeg && \
+        mkdir -p ${DIR} && \
+        cd ${DIR} && \
+        curl -sL https://github.com/uclouvain/openjpeg/archive/v2.1.2.tar.gz | \
+        tar -zx --strip-components=1 && \
+        cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+        make && \
+        make install && \
+        rm -rf ${DIR}
+
 
 # soxr
 RUN git clone https://git.code.sf.net/p/soxr/code soxr --branch master --single-branch \
