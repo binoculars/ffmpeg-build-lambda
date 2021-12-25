@@ -11,7 +11,6 @@ WORKDIR     /tmp/workdir
 ENV         FFMPEG_VERSION=4.4.1 \
     AOM_VERSION=v1.0.0 \
     CHROMAPRINT_VERSION=1.5.0 \
-    FDKAAC_VERSION=0.1.5 \
     FONTCONFIG_VERSION=2.12.4 \
     FREETYPE_VERSION=2.10.4 \
     FRIBIDI_VERSION=0.19.7 \
@@ -246,18 +245,6 @@ RUN \
         tar -zx -f xvidcore-${XVID_VERSION}.tar.gz && \
         cd xvidcore/build/generic && \
         ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" && \
-        make && \
-        make install && \
-        rm -rf ${DIR}
-### fdk-aac https://github.com/mstorsjo/fdk-aac
-RUN \
-        DIR=/tmp/fdk-aac && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \
-        tar -zx --strip-components=1 && \
-        autoreconf -fiv && \
-        ./configure --prefix="${PREFIX}" --enable-shared --datadir="${DIR}" && \
         make && \
         make install && \
         rm -rf ${DIR}
@@ -513,14 +500,15 @@ RUN \
         rm -rf ${DIR}
 
 # soxr
-RUN git clone https://git.code.sf.net/p/soxr/code soxr --branch master --single-branch \
-    && cd soxr \
-    && mkdir build \
-    && cd build \
-    && cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=OFF .. \
-    && make \
-    && make install \
-    && make clean
+RUN \
+        DIR=/tmp/soxr && \
+        git clone https://git.code.sf.net/p/soxr/code ${DIR} --branch master --single-branch && \
+        cd ${DIR} && \
+        mkdir build && \
+        cd build && \
+        cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=OFF .. && \
+        make && \
+        make install
 
 ## Build ffmpeg https://ffmpeg.org/
 RUN  \
@@ -537,7 +525,6 @@ RUN  \
         --enable-libaribb24 \
         --enable-libass \
         --enable-libbluray \
-        --enable-libfdk_aac \
         --enable-libfreetype \
         --enable-libkvazaar \
         --enable-libmp3lame \
@@ -579,7 +566,6 @@ RUN  \
         make clean && \
         make && \
         make install && \
-        make tools/zmqsend && cp tools/zmqsend ${PREFIX}/bin/ && \
         make distclean && \
         hash -r && \
         cd tools && \
@@ -605,6 +591,3 @@ CMD         ["--help"]
 ENTRYPOINT  ["/bin/ffmpeg"]
 
 COPY --from=build /tmp/fakeroot/ /
-
-# Let's make sure the app built correctly
-# Convenient to verify on https://hub.docker.com/r/jrottenberg/ffmpeg/builds/ console output
