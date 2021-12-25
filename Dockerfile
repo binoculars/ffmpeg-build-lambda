@@ -453,21 +453,6 @@ RUN \
         make install && \
         rm -rf ${DIR}
 
-## libzmq https://github.com/zeromq/libzmq/
-RUN \
-        DIR=/tmp/libzmq && \
-        mkdir -p ${DIR} && \
-        cd ${DIR} && \
-        curl -sLO https://github.com/zeromq/libzmq/archive/v${LIBZMQ_VERSION}.tar.gz && \
-        echo ${LIBZMQ_SHA256SUM} | sha256sum --check && \
-        tar -xz --strip-components=1 -f v${LIBZMQ_VERSION}.tar.gz && \
-        ./autogen.sh && \
-        ./configure --prefix="${PREFIX}" && \
-        make && \
-        make check && \
-        make install && \
-        rm -rf ${DIR}
-
 ## libsrt https://github.com/Haivision/srt
 RUN \
         DIR=/tmp/srt && \
@@ -527,6 +512,15 @@ RUN \
         make install && \
         rm -rf ${DIR}
 
+# soxr
+RUN git clone https://git.code.sf.net/p/soxr/code soxr --branch master --single-branch \
+    && cd soxr \
+    && mkdir build \
+    && cd build \
+    && cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=OFF .. \
+    && make \
+    && make install \
+    && make clean
 
 ## Build ffmpeg https://ffmpeg.org/
 RUN  \
@@ -551,6 +545,7 @@ RUN  \
         --enable-libopencore-amrwb \
         --enable-libopenjpeg \
         --enable-libopus \
+        --enable-libsoxr \
         --enable-libsrt \
         --enable-libtheora \
         --enable-libvidstab \
@@ -561,8 +556,6 @@ RUN  \
         --enable-libx265 \
         --enable-libxcb \
         --enable-libxvid \
-        --enable-libzmq \
-        --enable-nonfree \
         --enable-small \
         --enable-version3 \
         --extra-cflags="-I${PREFIX}/include" \
