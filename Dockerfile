@@ -499,17 +499,6 @@ RUN \
         make install && \
         rm -rf ${DIR}
 
-# soxr
-RUN \
-        DIR=/tmp/soxr && \
-        git clone https://git.code.sf.net/p/soxr/code ${DIR} --branch master --single-branch && \
-        cd ${DIR} && \
-        mkdir build && \
-        cd build && \
-        cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="${PREFIX}" -DBUILD_SHARED_LIBS=OFF .. && \
-        make && \
-        make install
-
 ## Build ffmpeg https://ffmpeg.org/
 RUN  \
         DIR=/tmp/ffmpeg && cd ${DIR} && \
@@ -532,7 +521,6 @@ RUN  \
         --enable-libopencore-amrwb \
         --enable-libopenjpeg \
         --enable-libopus \
-        --enable-libsoxr \
         --enable-libsrt \
         --enable-libtheora \
         --enable-libvidstab \
