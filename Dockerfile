@@ -9,6 +9,7 @@ RUN apk add --no-cache \
   wget \
   git \
   tar
+ARG WGET_OPTS="--retry-on-host-error --retry-on-http-error=429,500,502,503 -nv"
 
 FROM base AS builder
 WORKDIR /tmp
@@ -50,8 +51,9 @@ RUN \
 # before aom as libvmaf uses it
 FROM builder AS vmaf
 COPY --from=vmaf_download /tmp/vmaf/ /tmp/vmaf/
+WORKDIR /tmp/vmaf/libvmaf
 RUN \
-  cd vmaf/libvmaf && meson build --buildtype=release -Ddefault_library=static -Dbuilt_in_models=true -Denable_tests=false -Denable_docs=false -Denable_avx512=true -Denable_float=true && \
+  meson build --buildtype=release -Ddefault_library=static -Dbuilt_in_models=true -Denable_tests=false -Denable_docs=false -Denable_avx512=true -Denable_float=true && \
   ninja -j$(nproc) -vC build install
 # extra libs stdc++ is for vmaf https://github.com/Netflix/vmaf/issues/788
 RUN  sed -i 's/-lvmaf /-lvmaf -lstdc++ /' /usr/local/lib/pkgconfig/libvmaf.pc
@@ -74,8 +76,8 @@ COPY --from=aom_download /tmp/aom/ /tmp/aom/
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
 COPY --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
+WORKDIR /tmp/aom
 RUN \
-  cd aom && \
   mkdir build_tmp && cd build_tmp && \
   cmake \
     -G"Unix Makefiles" \
@@ -107,10 +109,10 @@ RUN \
 
 FROM builder AS libaribb24
 COPY --from=libaribb24_download /tmp/libaribb24/ /tmp/libaribb24/
+WORKDIR /tmp/libaribb24
 RUN apk add --no-cache \
   libpng-dev
 RUN \
-  cd libaribb24 && \
   autoreconf -fiv && \
   ./configure --enable-static --disable-shared && \
   make -j$(nproc) && make install
@@ -130,13 +132,14 @@ RUN \
 
 FROM builder AS libass
 COPY --from=libass_download /tmp/libass/ /tmp/libass/
+WORKDIR /tmp/libass
 RUN apk add --no-cache \
   freetype freetype-dev freetype-static \
   fribidi-dev fribidi-static \
   harfbuzz-dev harfbuzz-static \
   fontconfig-dev fontconfig-static
 RUN \
-  cd libass && ./configure --disable-shared --enable-static && \
+  ./configure --disable-shared --enable-static && \
   make -j$(nproc) && make install
 
 FROM download AS libbluray_download
@@ -156,12 +159,12 @@ RUN \
 
 FROM builder AS libbluray
 COPY --from=libbluray_download /tmp/libbluray/ /tmp/libbluray/
+WORKDIR /tmp/libbluray
 RUN apk add --no-cache \
   libxml2-dev \
   freetype freetype-dev freetype-static \
   fontconfig-dev fontconfig-static
 RUN \
-  cd libbluray && \
   autoreconf -fiv && ./configure --with-pic --disable-doxygen-doc --disable-doxygen-dot --enable-static --disable-shared --disable-examples --disable-bdjava-jar && \
   make -j$(nproc) install
 
@@ -180,8 +183,9 @@ RUN \
 
 FROM builder AS dav1d
 COPY --from=dav1d_download /tmp/dav1d/ /tmp/dav1d/
+WORKDIR /tmp/dav1d/
 RUN \
-  cd dav1d && meson build --buildtype release -Ddefault_library=static && \
+  meson build --buildtype release -Ddefault_library=static && \
   ninja -j$(nproc) -C build install
 
 FROM download AS davs2_download
@@ -200,9 +204,9 @@ RUN \
 
 FROM builder AS davs2
 COPY --from=davs2_download /tmp/davs2/ /tmp/davs2/
+WORKDIR /tmp/davs2/build/linux
 RUN \
-# TODO: seems to be issues with asm on musl
-  cd davs2/build/linux && \
+  # TODO: seems to be issues with asm on musl
   ./configure --disable-asm --enable-pic --enable-strip --disable-cli && \
   make -j$(nproc) install
 
@@ -218,8 +222,8 @@ RUN \
 
 FROM builder AS libgme
 COPY --from=libgme_download /tmp/libgme/ /tmp/libgme/
+WORKDIR /tmp/libgme
 RUN \
-  cd libgme && \
   mkdir build && cd build && \
   cmake \
     -G"Unix Makefiles" \
@@ -242,8 +246,8 @@ RUN \
 
 FROM builder AS libgsm
 COPY --from=libgsm_download /tmp/libgsm/ /tmp/libgsm/
+WORKDIR /tmp/libgsm
 RUN \
-  cd libgsm && \
   # Makefile is garbage, hence use specific compile arguments and flags
   # no need to build toast cli tool \
   rm src/toast* && \
@@ -269,9 +273,10 @@ RUN \
 
 FROM builder AS kvazaar
 COPY --from=kvazaar_download /tmp/kvazaar/ /tmp/kvazaar/
+WORKDIR /tmp/kvazaar
 RUN \
-  cd kvazaar && \
-  ./autogen.sh && ./configure --disable-shared --enable-static && \
+  ./autogen.sh && \
+  ./configure --disable-shared --enable-static && \
   make -j$(nproc) install
 
 FROM download AS libmodplug_download
@@ -289,8 +294,8 @@ RUN \
 
 FROM builder AS libmodplug
 COPY --from=libmodplug_download /tmp/libmodplug/ /tmp/libmodplug/
+WORKDIR /tmp/libmodplug
 RUN \
-  cd libmodplug && \
   ./configure --disable-shared --enable-static && \
   make -j$(nproc) install
 
@@ -309,8 +314,8 @@ RUN \
 
 FROM builder AS mp3lame
 COPY --from=mp3lame_download /tmp/lame/ /tmp/lame/
+WORKDIR /tmp/lame
 RUN \
-  cd lame && \
   ./configure --disable-shared --enable-static --enable-nasm --disable-gtktest --disable-cpml --disable-frontend && \
   make -j$(nproc) install
 
@@ -330,10 +335,10 @@ RUN \
 
 FROM builder AS libmysofa
 COPY --from=libmysofa_download /tmp/libmysofa/ /tmp/libmysofa/
+WORKDIR /tmp/libmysofa/build
 RUN apk add --no-cache \
   zlib-dev zlib-static
 RUN \
-  cd libmysofa/build && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -359,8 +364,8 @@ RUN \
 
 FROM builder AS opencoreamr
 COPY --from=opencoreamr_download /tmp/opencoreamr/ /tmp/opencoreamr/
+WORKDIR /tmp/opencoreamr
 RUN \
-  cd opencoreamr && \
   ./configure --enable-static --disable-shared && \
   make -j$(nproc) install
 
@@ -379,8 +384,9 @@ RUN \
 
 FROM builder AS openjpeg
 COPY --from=openjpeg_download /tmp/openjpeg/ /tmp/openjpeg/
+WORKDIR /tmp/openjpeg
 RUN \
-  cd openjpeg && mkdir build && cd build && \
+  mkdir build && cd build && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -409,8 +415,8 @@ RUN \
 
 FROM builder AS opus
 COPY --from=opus_download /tmp/opus/ /tmp/opus/
+WORKDIR /tmp/opus
 RUN \
-  cd opus && \
   ./configure --disable-shared --enable-static --disable-extra-programs --disable-doc && \
   make -j$(nproc) install
 
@@ -429,12 +435,12 @@ RUN \
 
 FROM builder AS rav1e
 COPY --from=rav1e_download /tmp/rav1e/ /tmp/rav1e/
+WORKDIR /tmp/rav1e
 RUN apk add --no-cache \
   rust cargo
 # debug builds a bit faster and we don't care about runtime speed
 RUN cargo install --debug --version 0.9.5 cargo-c
 RUN \
-  cd rav1e && \
   cargo cinstall --release
 # cargo-c/alpine rustc results in Libs.private depend on gcc_s
 # https://gitlab.alpinelinux.org/alpine/aports/-/issues/11806
@@ -456,11 +462,11 @@ RUN \
 
 FROM builder AS rubberband
 COPY --from=rubberband_download /tmp/rubberband/ /tmp/rubberband/
+WORKDIR /tmp/rubberband
 RUN apk add --no-cache \
   fftw-dev \
   libsamplerate-dev
 RUN \
-  cd rubberband && \
   meson -Ddefault_library=static -Dfft=fftw -Dresampler=libsamplerate build && \
   ninja -j$(nproc) -vC build install && \
   echo "Requires.private: fftw3 samplerate" >> /usr/local/lib/pkgconfig/rubberband.pc
@@ -481,8 +487,8 @@ RUN \
 
 FROM builder AS libshine
 COPY --from=libshine_download /tmp/libshine/ /tmp/libshine/
+WORKDIR /tmp/libshine
 RUN \
-  cd libshine && \
   ./configure --with-pic --enable-static --disable-shared --disable-fast-install && \
   make -j$(nproc) install
 
@@ -502,9 +508,10 @@ RUN \
 
 FROM builder AS speex
 COPY --from=speex_download /tmp/speex/ /tmp/speex/
+WORKDIR /tmp/speex
 RUN \
-  cd speex && \
-  ./autogen.sh && ./configure --disable-shared --enable-static && \
+  ./autogen.sh && \
+  ./configure --disable-shared --enable-static && \
   make -j$(nproc) install
 
 FROM download AS svtav1_download
@@ -522,8 +529,8 @@ RUN \
 
 FROM builder AS svtav1
 COPY --from=svtav1_download /tmp/svtav1/ /tmp/svtav1/
+WORKDIR /tmp/svtav1/Build
 RUN \
-  cd svtav1/Build && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -550,8 +557,8 @@ RUN \
 # has to be before theora
 FROM builder AS ogg
 COPY --from=ogg_download /tmp/ogg/ /tmp/ogg/
+WORKDIR /tmp/ogg
 RUN \
-  cd ogg && \
   ./configure --disable-shared --enable-static && \
   make -j$(nproc) install
 
@@ -574,10 +581,10 @@ COPY --from=theora_download /tmp/theora/ /tmp/theora/
 COPY --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
 COPY --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
 COPY --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
+WORKDIR /tmp/theora
 RUN \
   # --build=$(arch)-unknown-linux-gnu helps with guessing the correct build. For some reason,
   # build script can't guess the build type in arm64 (hardware and emulated) environment.
-  cd theora && \
   ./configure --build=$(arch)-unknown-linux-gnu --disable-examples --disable-oggtest --disable-shared --enable-static && \
   make -j$(nproc) install
 
@@ -596,8 +603,8 @@ RUN \
 
 FROM builder AS twolame
 COPY --from=twolame_download /tmp/twolame/ /tmp/twolame/
+WORKDIR /tmp/twolame
 RUN \
-  cd twolame && \
   ./configure --disable-shared --enable-static --disable-sndfile --with-pic && \
   make -j$(nproc) install
 
@@ -613,10 +620,10 @@ RUN \
 
 FROM builder AS uavs3d
 COPY --from=uavs3d_download /tmp/uavs3d/ /tmp/uavs3d/
+WORKDIR /tmp/uavs3d
 RUN \
-  cd uavs3d && \
-# Removes BIT_DEPTH 10 to be able to build on other platforms. 10 was overkill anyways.
-#  sed -i 's/define BIT_DEPTH 8/define BIT_DEPTH 10/' source/decore/com_def.h && \
+  # Removes BIT_DEPTH 10 to be able to build on other platforms. 10 was overkill anyways.
+  #  sed -i 's/define BIT_DEPTH 8/define BIT_DEPTH 10/' source/decore/com_def.h && \
   mkdir build/linux && cd build/linux && \
   cmake \
     -G"Unix Makefiles" \
@@ -641,8 +648,9 @@ RUN \
 
 FROM builder AS vidstab
 COPY --from=vidstab_download /tmp/vidstab/ /tmp/vidstab/
+WORKDIR /tmp/vidstab
 RUN \
-  cd vidstab && mkdir build && cd build && \
+  mkdir build && cd build && \
   # This line workarounds the issue that happens when the image builds in emulated (buildx) arm64 environment.
   # Since in emulated container the /proc is mounted from the host, the cmake not able to detect CPU features correctly.
   sed -i 's/include (FindSSE)/if(CMAKE_SYSTEM_ARCH MATCHES "amd64")\ninclude (FindSSE)\nendif()/' ../CMakeLists.txt && \
@@ -676,8 +684,8 @@ COPY --from=vorbis_download /tmp/vorbis/ /tmp/vorbis/
 COPY --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
 COPY --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
 COPY --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
+WORKDIR /tmp/vorbis
 RUN \
-  cd vorbis && \
   ./configure --disable-shared --enable-static --disable-oggtest && \
   make -j$(nproc) install
 
@@ -697,8 +705,8 @@ RUN \
 
 FROM builder AS libvpx
 COPY --from=libvpx_download /tmp/libvpx/ /tmp/libvpx/
+WORKDIR /tmp/libvpx
 RUN \
-  cd libvpx && \
   ./configure --enable-static --enable-vp9-highbitdepth --disable-shared --disable-unit-tests --disable-examples && \
   make -j$(nproc) install
 
@@ -718,9 +726,10 @@ RUN \
 
 FROM builder AS libwebp
 COPY --from=libwebp_download /tmp/libwebp/ /tmp/libwebp/
+WORKDIR /tmp/libwebp
 RUN \
-  cd libwebp && \
-  ./autogen.sh && ./configure --disable-shared --enable-static --with-pic --enable-libwebpmux --disable-libwebpextras --disable-libwebpdemux --disable-sdl --disable-gl --disable-png --disable-jpeg --disable-tiff --disable-gif && \
+  ./autogen.sh && \
+  ./configure --disable-shared --enable-static --with-pic --enable-libwebpmux --disable-libwebpextras --disable-libwebpdemux --disable-sdl --disable-gl --disable-png --disable-jpeg --disable-tiff --disable-gif && \
   make -j$(nproc) install
 
 FROM download AS x264_download
@@ -737,8 +746,8 @@ RUN \
 
 FROM builder AS x264
 COPY --from=x264_download /tmp/x264/ /tmp/x264/
+WORKDIR /tmp/x264
 RUN \
-  cd x264 && \
   ./configure --enable-pic --enable-static --disable-cli --disable-lavf --disable-swscale && \
   make -j$(nproc) install
 
@@ -758,6 +767,7 @@ RUN \
 
 FROM builder AS x265
 COPY --from=x265_download /tmp/x265/ /tmp/x265/
+WORKDIR /tmp/x265/build/linux
 # -w-macro-params-legacy to not log lots of asm warnings
 # https://bitbucket.org/multicoreware/x265_git/issues/559/warnings-when-assembling-with-nasm-215
 # TODO: remove 'sed' hack when upstream (x265) fixes the issue and adds '-DPIC' to ARM_ARGS
@@ -768,7 +778,6 @@ RUN apk add --no-cache \
   git \
   numactl-dev
 RUN \
-  cd x265/build/linux && \
   sed -i '/^cmake / s/$/ -G "Unix Makefiles" ${CMAKEFLAGS}/' ./multilib.sh && \
   sed -i 's/ -DENABLE_SHARED=OFF//g' ./multilib.sh && \
   sed -i 's/set(ARM_ARGS -fPIC -flax-vector-conversions)/set(ARM_ARGS -DPIC -fPIC -flax-vector-conversions)/' ../../source/CMakeLists.txt && \
@@ -793,9 +802,9 @@ RUN \
 
 FROM builder AS xavs2
 COPY --from=xavs2_download /tmp/xavs2/ /tmp/xavs2/
+WORKDIR /tmp/xavs2/build/linux
 RUN \
   # TODO: seems to be issues with asm on musl
-  cd xavs2/build/linux && \
   ./configure --disable-asm --enable-pic --disable-cli && \
   make -j$(nproc) install
 
@@ -815,8 +824,8 @@ RUN \
 
 FROM builder AS xvid
 COPY --from=xvid_download /tmp/xvid/ /tmp/xvid/
+WORKDIR /tmp/xvid/build/generic 
 RUN \
-  cd xvid/build/generic && \
   CFLAGS="$CFLAGS -fstrength-reduce -ffast-math" ./configure && \
   make -j$(nproc) && make install
 
@@ -835,9 +844,10 @@ RUN \
 
 FROM builder AS zimg
 COPY --from=zimg_download /tmp/zimg/ /tmp/zimg/
+WORKDIR /tmp/zimg
 RUN \
-  cd zimg && \
-  ./autogen.sh && ./configure --disable-shared --enable-static && \
+  ./autogen.sh && \
+  ./configure --disable-shared --enable-static && \
   make -j$(nproc) install
 
 FROM download AS ffmpeg_download
@@ -978,8 +988,8 @@ COPY --from=zimg /usr/local/lib/pkgconfig/zimg.pc /usr/local/lib/pkgconfig/zimg.
 COPY --from=zimg /usr/local/lib/libzimg.a /usr/local/lib/libzimg.a
 COPY --from=zimg /usr/local/include/zimg* /usr/local/include/
 COPY --from=ffmpeg_download /tmp/ffmpeg/ /tmp/ffmpeg/
+WORKDIR /tmp/ffmpeg
 RUN \
-  cd ffmpeg && \
 # sed changes --toolchain=hardened -pie to -static-pie
 # extra ldflags stack-size=2097152 is to increase default stack size from 128KB (musl default) to something
 # more similar to glibc (2MB). This fixing segfault with libaom-av1 and libsvtav1 as they seems to pass
