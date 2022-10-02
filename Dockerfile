@@ -49,7 +49,7 @@ RUN \
 
 # before aom as libvmaf uses it
 FROM builder AS vmaf
-COPY --link --from=vmaf_download /tmp/vmaf/ /tmp/vmaf/
+COPY --from=vmaf_download /tmp/vmaf/ /tmp/vmaf/
 RUN \
   cd vmaf/libvmaf && meson build --buildtype=release -Ddefault_library=static -Dbuilt_in_models=true -Denable_tests=false -Denable_docs=false -Denable_avx512=true -Denable_float=true && \
   ninja -j$(nproc) -vC build install
@@ -70,10 +70,10 @@ RUN \
 
 # build after libvmaf
 FROM builder AS aom
-COPY --link --from=aom_download /tmp/aom/ /tmp/aom/
-COPY --link --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
-COPY --link --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
-COPY --link --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
+COPY --from=aom_download /tmp/aom/ /tmp/aom/
+COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
+COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
+COPY --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
 RUN \
   cd aom && \
   mkdir build_tmp && cd build_tmp && \
@@ -106,7 +106,7 @@ RUN \
   tar xf libaribb24.tar.gz -C libaribb24 --strip-components=1
 
 FROM builder AS libaribb24
-COPY --link --from=libaribb24_download /tmp/libaribb24/ /tmp/libaribb24/
+COPY --from=libaribb24_download /tmp/libaribb24/ /tmp/libaribb24/
 RUN apk add --no-cache \
   libpng-dev
 RUN \
@@ -129,7 +129,7 @@ RUN \
   tar xf libass.tar.gz -C libass --strip-components=1
 
 FROM builder AS libass
-COPY --link --from=libass_download /tmp/libass/ /tmp/libass/
+COPY --from=libass_download /tmp/libass/ /tmp/libass/
 RUN apk add --no-cache \
   freetype freetype-dev freetype-static \
   fribidi-dev fribidi-static \
@@ -155,7 +155,7 @@ RUN \
   git clone https://code.videolan.org/videolan/libudfread.git contrib/libudfread
 
 FROM builder AS libbluray
-COPY --link --from=libbluray_download /tmp/libbluray/ /tmp/libbluray/
+COPY --from=libbluray_download /tmp/libbluray/ /tmp/libbluray/
 RUN apk add --no-cache \
   libxml2-dev \
   freetype freetype-dev freetype-static \
@@ -179,7 +179,7 @@ RUN \
   tar xf dav1d.tar.gz -C dav1d --strip-components=1
 
 FROM builder AS dav1d
-COPY --link --from=dav1d_download /tmp/dav1d/ /tmp/dav1d/
+COPY --from=dav1d_download /tmp/dav1d/ /tmp/dav1d/
 RUN \
   cd dav1d && meson build --buildtype release -Ddefault_library=static && \
   ninja -j$(nproc) -C build install
@@ -199,7 +199,7 @@ RUN \
   tar xf davs2.tar.gz -C davs2 --strip-components=1
 
 FROM builder AS davs2
-COPY --link --from=davs2_download /tmp/davs2/ /tmp/davs2/
+COPY --from=davs2_download /tmp/davs2/ /tmp/davs2/
 RUN \
 # TODO: seems to be issues with asm on musl
   cd davs2/build/linux && \
@@ -217,7 +217,7 @@ RUN \
   cd libgme && git checkout $LIBGME_COMMIT
 
 FROM builder AS libgme
-COPY --link --from=libgme_download /tmp/libgme/ /tmp/libgme/
+COPY --from=libgme_download /tmp/libgme/ /tmp/libgme/
 RUN \
   cd libgme && \
   mkdir build && cd build && \
@@ -241,7 +241,7 @@ RUN \
   cd libgsm && git checkout $LIBGSM_COMMIT
 
 FROM builder AS libgsm
-COPY --link --from=libgsm_download /tmp/libgsm/ /tmp/libgsm/
+COPY --from=libgsm_download /tmp/libgsm/ /tmp/libgsm/
 RUN \
   cd libgsm && \
   # Makefile is garbage, hence use specific compile arguments and flags
@@ -268,7 +268,7 @@ RUN \
   tar xf kvazaar.tar.gz -C kvazaar --strip-components=1
 
 FROM builder AS kvazaar
-COPY --link --from=kvazaar_download /tmp/kvazaar/ /tmp/kvazaar/
+COPY --from=kvazaar_download /tmp/kvazaar/ /tmp/kvazaar/
 RUN \
   cd kvazaar && \
   ./autogen.sh && ./configure --disable-shared --enable-static && \
@@ -288,7 +288,7 @@ RUN \
   tar xf libmodplug.tar.gz -C libmodplug --strip-components=1
 
 FROM builder AS libmodplug
-COPY --link --from=libmodplug_download /tmp/libmodplug/ /tmp/libmodplug/
+COPY --from=libmodplug_download /tmp/libmodplug/ /tmp/libmodplug/
 RUN \
   cd libmodplug && \
   ./configure --disable-shared --enable-static && \
@@ -308,7 +308,7 @@ RUN \
   tar xf lame.tar.gz -C lame --strip-components=1
 
 FROM builder AS mp3lame
-COPY --link --from=mp3lame_download /tmp/lame/ /tmp/lame/
+COPY --from=mp3lame_download /tmp/lame/ /tmp/lame/
 RUN \
   cd lame && \
   ./configure --disable-shared --enable-static --enable-nasm --disable-gtktest --disable-cpml --disable-frontend && \
@@ -329,7 +329,7 @@ RUN \
   tar xf libmysofa.tar.gz -C libmysofa --strip-components=1
 
 FROM builder AS libmysofa
-COPY --link --from=libmysofa_download /tmp/libmysofa/ /tmp/libmysofa/
+COPY --from=libmysofa_download /tmp/libmysofa/ /tmp/libmysofa/
 RUN apk add --no-cache \
   zlib-dev zlib-static
 RUN \
@@ -358,7 +358,7 @@ RUN \
   tar xf opencoreamr.tar.gz -C opencoreamr --strip-components=1
 
 FROM builder AS opencoreamr
-COPY --link --from=opencoreamr_download /tmp/opencoreamr/ /tmp/opencoreamr/
+COPY --from=opencoreamr_download /tmp/opencoreamr/ /tmp/opencoreamr/
 RUN \
   cd opencoreamr && \
   ./configure --enable-static --disable-shared && \
@@ -378,7 +378,7 @@ RUN \
   tar xf openjpeg.tar.gz -C openjpeg --strip-components=1
 
 FROM builder AS openjpeg
-COPY --link --from=openjpeg_download /tmp/openjpeg/ /tmp/openjpeg/
+COPY --from=openjpeg_download /tmp/openjpeg/ /tmp/openjpeg/
 RUN \
   cd openjpeg && mkdir build && cd build && \
   cmake \
@@ -408,7 +408,7 @@ RUN \
   tar xf opus.tar.gz -C opus --strip-components=1
 
 FROM builder AS opus
-COPY --link --from=opus_download /tmp/opus/ /tmp/opus/
+COPY --from=opus_download /tmp/opus/ /tmp/opus/
 RUN \
   cd opus && \
   ./configure --disable-shared --enable-static --disable-extra-programs --disable-doc && \
@@ -428,7 +428,7 @@ RUN \
   tar xf rav1e.tar.gz -C rav1e --strip-components=1
 
 FROM builder AS rav1e
-COPY --link --from=rav1e_download /tmp/rav1e/ /tmp/rav1e/
+COPY --from=rav1e_download /tmp/rav1e/ /tmp/rav1e/
 RUN apk add --no-cache \
   rust cargo
 # debug builds a bit faster and we don't care about runtime speed
@@ -455,7 +455,7 @@ RUN \
   tar xf rubberband.tar.bz2 -C rubberband --strip-components=1
 
 FROM builder AS rubberband
-COPY --link --from=rubberband_download /tmp/rubberband/ /tmp/rubberband/
+COPY --from=rubberband_download /tmp/rubberband/ /tmp/rubberband/
 RUN apk add --no-cache \
   fftw-dev \
   libsamplerate-dev
@@ -480,7 +480,7 @@ RUN \
   tar xf libshine.tar.gz -C libshine --strip-components=1
 
 FROM builder AS libshine
-COPY --link --from=libshine_download /tmp/libshine/ /tmp/libshine/
+COPY --from=libshine_download /tmp/libshine/ /tmp/libshine/
 RUN \
   cd libshine && \
   ./configure --with-pic --enable-static --disable-shared --disable-fast-install && \
@@ -501,7 +501,7 @@ RUN \
   tar xf speex.tar.gz -C speex --strip-components=1
 
 FROM builder AS speex
-COPY --link --from=speex_download /tmp/speex/ /tmp/speex/
+COPY --from=speex_download /tmp/speex/ /tmp/speex/
 RUN \
   cd speex && \
   ./autogen.sh && ./configure --disable-shared --enable-static && \
@@ -521,7 +521,7 @@ RUN \
   tar xf svtav1.tar.bz2 -C svtav1 --strip-components=1
 
 FROM builder AS svtav1
-COPY --link --from=svtav1_download /tmp/svtav1/ /tmp/svtav1/
+COPY --from=svtav1_download /tmp/svtav1/ /tmp/svtav1/
 RUN \
   cd svtav1/Build && \
   cmake \
@@ -549,7 +549,7 @@ RUN \
 
 # has to be before theora
 FROM builder AS ogg
-COPY --link --from=ogg_download /tmp/ogg/ /tmp/ogg/
+COPY --from=ogg_download /tmp/ogg/ /tmp/ogg/
 RUN \
   cd ogg && \
   ./configure --disable-shared --enable-static && \
@@ -570,10 +570,10 @@ RUN \
   tar xf libtheora.tar.bz2 -C theora --strip-components=1
 
 FROM builder AS theora
-COPY --link --from=theora_download /tmp/theora/ /tmp/theora/
-COPY --link --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
-COPY --link --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
-COPY --link --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
+COPY --from=theora_download /tmp/theora/ /tmp/theora/
+COPY --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
+COPY --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
+COPY --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
 RUN \
   # --build=$(arch)-unknown-linux-gnu helps with guessing the correct build. For some reason,
   # build script can't guess the build type in arm64 (hardware and emulated) environment.
@@ -595,7 +595,7 @@ RUN \
   tar xf twolame.tar.gz -C twolame --strip-components=1
 
 FROM builder AS twolame
-COPY --link --from=twolame_download /tmp/twolame/ /tmp/twolame/
+COPY --from=twolame_download /tmp/twolame/ /tmp/twolame/
 RUN \
   cd twolame && \
   ./configure --disable-shared --enable-static --disable-sndfile --with-pic && \
@@ -612,7 +612,7 @@ RUN \
   cd uavs3d && git checkout $UAVS3D_COMMIT
 
 FROM builder AS uavs3d
-COPY --link --from=uavs3d_download /tmp/uavs3d/ /tmp/uavs3d/
+COPY --from=uavs3d_download /tmp/uavs3d/ /tmp/uavs3d/
 RUN \
   cd uavs3d && \
 # Removes BIT_DEPTH 10 to be able to build on other platforms. 10 was overkill anyways.
@@ -640,7 +640,7 @@ RUN \
   tar xf vid.stab.tar.gz -C vidstab --strip-components=1
 
 FROM builder AS vidstab
-COPY --link --from=vidstab_download /tmp/vidstab/ /tmp/vidstab/
+COPY --from=vidstab_download /tmp/vidstab/ /tmp/vidstab/
 RUN \
   cd vidstab && mkdir build && cd build && \
   # This line workarounds the issue that happens when the image builds in emulated (buildx) arm64 environment.
@@ -672,10 +672,10 @@ RUN \
   tar xf libvorbis.tar.gz -C vorbis --strip-components=1
 
 FROM builder AS vorbis
-COPY --link --from=vorbis_download /tmp/vorbis/ /tmp/vorbis/
-COPY --link --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
-COPY --link --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
-COPY --link --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
+COPY --from=vorbis_download /tmp/vorbis/ /tmp/vorbis/
+COPY --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
+COPY --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
+COPY --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
 RUN \
   cd vorbis && \
   ./configure --disable-shared --enable-static --disable-oggtest && \
@@ -696,7 +696,7 @@ RUN \
   tar xf libvpx.tar.gz -C libvpx --strip-components=1
 
 FROM builder AS libvpx
-COPY --link --from=libvpx_download /tmp/libvpx/ /tmp/libvpx/
+COPY --from=libvpx_download /tmp/libvpx/ /tmp/libvpx/
 RUN \
   cd libvpx && \
   ./configure --enable-static --enable-vp9-highbitdepth --disable-shared --disable-unit-tests --disable-examples && \
@@ -717,7 +717,7 @@ RUN \
   tar xf libwebp.tar.gz -C libwebp --strip-components=1
 
 FROM builder AS libwebp
-COPY --link --from=libwebp_download /tmp/libwebp/ /tmp/libwebp/
+COPY --from=libwebp_download /tmp/libwebp/ /tmp/libwebp/
 RUN \
   cd libwebp && \
   ./autogen.sh && ./configure --disable-shared --enable-static --with-pic --enable-libwebpmux --disable-libwebpextras --disable-libwebpdemux --disable-sdl --disable-gl --disable-png --disable-jpeg --disable-tiff --disable-gif && \
@@ -736,7 +736,7 @@ RUN \
   git checkout $X264_VERSION
 
 FROM builder AS x264
-COPY --link --from=x264_download /tmp/x264/ /tmp/x264/
+COPY --from=x264_download /tmp/x264/ /tmp/x264/
 RUN \
   cd x264 && \
   ./configure --enable-pic --enable-static --disable-cli --disable-lavf --disable-swscale && \
@@ -757,7 +757,7 @@ RUN \
   tar xf x265_git.tar.bz2 -C x265 --strip-components=1
 
 FROM builder AS x265
-COPY --link --from=x265_download /tmp/x265/ /tmp/x265/
+COPY --from=x265_download /tmp/x265/ /tmp/x265/
 # -w-macro-params-legacy to not log lots of asm warnings
 # https://bitbucket.org/multicoreware/x265_git/issues/559/warnings-when-assembling-with-nasm-215
 # TODO: remove 'sed' hack when upstream (x265) fixes the issue and adds '-DPIC' to ARM_ARGS
@@ -792,7 +792,7 @@ RUN \
   tar xf xavs2.tar.gz -C xavs2 --strip-components=1
 
 FROM builder AS xavs2
-COPY --link --from=xavs2_download /tmp/xavs2/ /tmp/xavs2/
+COPY --from=xavs2_download /tmp/xavs2/ /tmp/xavs2/
 RUN \
   # TODO: seems to be issues with asm on musl
   cd xavs2/build/linux && \
@@ -814,7 +814,7 @@ RUN \
   tar xf libxvid.tar.gz -C xvid --strip-components=1
 
 FROM builder AS xvid
-COPY --link --from=xvid_download /tmp/xvid/ /tmp/xvid/
+COPY --from=xvid_download /tmp/xvid/ /tmp/xvid/
 RUN \
   cd xvid/build/generic && \
   CFLAGS="$CFLAGS -fstrength-reduce -ffast-math" ./configure && \
@@ -834,7 +834,7 @@ RUN \
   tar xf zimg.tar.gz -C zimg --strip-components=1
 
 FROM builder AS zimg
-COPY --link --from=zimg_download /tmp/zimg/ /tmp/zimg/
+COPY --from=zimg_download /tmp/zimg/ /tmp/zimg/
 RUN \
   cd zimg && \
   ./autogen.sh && ./configure --disable-shared --enable-static && \
@@ -877,107 +877,107 @@ RUN apk add --no-cache \
   fribidi-dev fribidi-static \
   harfbuzz-dev harfbuzz-static \
   fontconfig-dev fontconfig-static
-COPY --link --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
-COPY --link --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
-COPY --link --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
-COPY --link --from=aom /usr/local/lib/pkgconfig/aom.pc /usr/local/lib/pkgconfig/aom.pc
-COPY --link --from=aom /usr/local/lib/libaom.a /usr/local/lib/libaom.a
-COPY --link --from=aom /usr/local/include/aom/ /usr/local/include/aom/
-COPY --link --from=libaribb24 /usr/local/lib/pkgconfig/aribb24.pc /usr/local/lib/pkgconfig/aribb24.pc
-COPY --link --from=libaribb24 /usr/local/lib/libaribb24.a /usr/local/lib/libaribb24.a
-COPY --link --from=libaribb24 /usr/local/include/aribb24/ /usr/local/include/aribb24/
-COPY --link --from=libass /usr/local/lib/pkgconfig/libass.pc /usr/local/lib/pkgconfig/libass.pc
-COPY --link --from=libass /usr/local/lib/libass.a /usr/local/lib/libass.a
-COPY --link --from=libass /usr/local/include/ass/ /usr/local/include/ass/
-COPY --link --from=libbluray /usr/local/lib/pkgconfig/libbluray.pc /usr/local/lib/pkgconfig/libbluray.pc
-COPY --link --from=libbluray /usr/local/lib/libbluray.a /usr/local/lib/libbluray.a
-COPY --link --from=libbluray /usr/local/include/libbluray/ /usr/local/include/libbluray/
-COPY --link --from=dav1d /usr/local/lib/pkgconfig/dav1d.pc /usr/local/lib/pkgconfig/dav1d.pc
-COPY --link --from=dav1d /usr/local/lib/libdav1d.a /usr/local/lib/libdav1d.a
-COPY --link --from=dav1d /usr/local/include/dav1d/ /usr/local/include/dav1d/
-COPY --link --from=davs2 /usr/local/lib/pkgconfig/davs2.pc /usr/local/lib/pkgconfig/davs2.pc
-COPY --link --from=davs2 /usr/local/lib/libdavs2.a /usr/local/lib/libdavs2.a
-COPY --link --from=davs2 /usr/local/include/davs2* /usr/local/include/
-COPY --link --from=libgme /usr/local/lib/pkgconfig/libgme.pc /usr/local/lib/pkgconfig/libgme.pc
-COPY --link --from=libgme /usr/local/lib/libgme.a /usr/local/lib/libgme.a
-COPY --link --from=libgme /usr/local/include/gme/ /usr/local/include/gme/
-COPY --link --from=libgsm /usr/local/lib/libgsm.a /usr/local/lib/libgsm.a
-COPY --link --from=libgsm /usr/local/include/gsm/ /usr/local/include/gsm/
-COPY --link --from=kvazaar /usr/local/lib/pkgconfig/kvazaar.pc /usr/local/lib/pkgconfig/kvazaar.pc
-COPY --link --from=kvazaar /usr/local/lib/libkvazaar.a /usr/local/lib/libkvazaar.a
-COPY --link --from=kvazaar /usr/local/include/kvazaar.h /usr/local/include/kvazaar.h
-COPY --link --from=libmodplug /usr/local/lib/pkgconfig/libmodplug.pc /usr/local/lib/pkgconfig/libmodplug.pc
-COPY --link --from=libmodplug /usr/local/lib/libmodplug.a /usr/local/lib/libmodplug.a
-COPY --link --from=libmodplug /usr/local/include/libmodplug/ /usr/local/include/libmodplug/
-COPY --link --from=mp3lame /usr/local/lib/libmp3lame.a /usr/local/lib/libmp3lame.a
-COPY --link --from=mp3lame /usr/local/include/lame/ /usr/local/include/lame/
-COPY --link --from=libmysofa /usr/local/lib/pkgconfig/libmysofa.pc /usr/local/lib/pkgconfig/libmysofa.pc
-COPY --link --from=libmysofa /usr/local/lib/libmysofa.a /usr/local/lib/libmysofa.a
-COPY --link --from=libmysofa /usr/local/include/mysofa.h /usr/local/include/mysofa.h
-COPY --link --from=opencoreamr /usr/local/lib/libopencore-amr* /usr/local/lib/
-COPY --link --from=opencoreamr /usr/local/lib/pkgconfig/opencore-amr* /usr/local/lib/pkgconfig/
-COPY --link --from=opencoreamr /usr/local/include/opencore-amrnb/ /usr/local/include/opencore-amrnb/
-COPY --link --from=opencoreamr /usr/local/include/opencore-amrwb/ /usr/local/include/opencore-amrwb/
-COPY --link --from=openjpeg /usr/local/lib/pkgconfig/libopenjp2.pc /usr/local/lib/pkgconfig/libopenjp2.pc
-COPY --link --from=openjpeg /usr/local/lib/libopenjp2.a /usr/local/lib/libopenjp2.a
-COPY --link --from=openjpeg /usr/local/include/openjpeg-2.5/ /usr/local/include/openjpeg-2.5/
-COPY --link --from=opus /usr/local/lib/pkgconfig/opus.pc /usr/local/lib/pkgconfig/opus.pc
-COPY --link --from=opus /usr/local/lib/libopus.a /usr/local/lib/libopus.a
-COPY --link --from=opus /usr/local/include/opus/ /usr/local/include/opus/
-COPY --link --from=rav1e /usr/local/lib/pkgconfig/rav1e.pc /usr/local/lib/pkgconfig/rav1e.pc
-COPY --link --from=rav1e /usr/local/lib/librav1e.a /usr/local/lib/librav1e.a
-COPY --link --from=rav1e /usr/local/include/rav1e/ /usr/local/include/rav1e/
-COPY --link --from=rubberband /usr/local/lib/pkgconfig/rubberband.pc /usr/local/lib/pkgconfig/rubberband.pc
-COPY --link --from=rubberband /usr/local/lib/librubberband.a /usr/local/lib/librubberband.a
-COPY --link --from=rubberband /usr/local/include/rubberband/ /usr/local/include/rubberband/
-COPY --link --from=libshine /usr/local/lib/pkgconfig/shine.pc /usr/local/lib/pkgconfig/shine.pc
-COPY --link --from=libshine /usr/local/lib/libshine.a /usr/local/lib/libshine.a
-COPY --link --from=libshine /usr/local/include/shine/ /usr/local/include/shine/
-COPY --link --from=speex /usr/local/lib/pkgconfig/speex.pc /usr/local/lib/pkgconfig/speex.pc
-COPY --link --from=speex /usr/local/lib/libspeex.a /usr/local/lib/libspeex.a
-COPY --link --from=speex /usr/local/include/speex/ /usr/local/include/speex/
-COPY --link --from=svtav1 /usr/local/lib/pkgconfig/SvtAv1*.pc /usr/local/lib/pkgconfig/
-COPY --link --from=svtav1 /usr/local/lib/libSvtAv1*.a /usr/local/lib/
-COPY --link --from=svtav1 /usr/local/include/svt-av1/ /usr/local/include/svt-av1/
-COPY --link --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
-COPY --link --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
-COPY --link --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
-COPY --link --from=theora /usr/local/lib/pkgconfig/theora*.pc /usr/local/lib/pkgconfig/
-COPY --link --from=theora /usr/local/lib/libtheora*.a /usr/local/lib/
-COPY --link --from=theora /usr/local/include/theora/ /usr/local/include/theora/
-COPY --link --from=twolame /usr/local/lib/pkgconfig/twolame.pc /usr/local/lib/pkgconfig/twolame.pc
-COPY --link --from=twolame /usr/local/lib/libtwolame.a /usr/local/lib/libtwolame.a
-COPY --link --from=twolame /usr/local/include/twolame.h /usr/local/include/twolame.h
-COPY --link --from=uavs3d /usr/local/lib/pkgconfig/uavs3d.pc /usr/local/lib/pkgconfig/uavs3d.pc
-COPY --link --from=uavs3d /usr/local/lib/libuavs3d.a /usr/local/lib/libuavs3d.a
-COPY --link --from=uavs3d /usr/local/include/uavs3d.h /usr/local/include/uavs3d.h
-COPY --link --from=vidstab /usr/local/lib/pkgconfig/vidstab.pc /usr/local/lib/pkgconfig/vidstab.pc
-COPY --link --from=vidstab /usr/local/lib/libvidstab.a /usr/local/lib/libvidstab.a
-COPY --link --from=vidstab /usr/local/include/vid.stab/ /usr/local/include/vid.stab/
-COPY --link --from=vorbis /usr/local/lib/pkgconfig/vorbis*.pc /usr/local/lib/pkgconfig/
-COPY --link --from=vorbis /usr/local/lib/libvorbis*.a /usr/local/lib/
-COPY --link --from=vorbis /usr/local/include/vorbis/ /usr/local/include/vorbis/
-COPY --link --from=libvpx /usr/local/lib/pkgconfig/vpx.pc /usr/local/lib/pkgconfig/vpx.pc
-COPY --link --from=libvpx /usr/local/lib/libvpx.a /usr/local/lib/libvpx.a
-COPY --link --from=libvpx /usr/local/include/vpx/ /usr/local/include/vpx/
-COPY --link --from=libwebp /usr/local/lib/pkgconfig/libwebp*.pc /usr/local/lib/pkgconfig/
-COPY --link --from=libwebp /usr/local/lib/libwebp*.a /usr/local/lib/
-COPY --link --from=libwebp /usr/local/include/webp/ /usr/local/include/webp/
-COPY --link --from=x264 /usr/local/lib/pkgconfig/x264.pc /usr/local/lib/pkgconfig/x264.pc
-COPY --link --from=x264 /usr/local/lib/libx264.a /usr/local/lib/libx264.a
-COPY --link --from=x264 /usr/local/include/x264*.h /usr/local/include/
-COPY --link --from=x265 /usr/local/lib/pkgconfig/x265.pc /usr/local/lib/pkgconfig/x265.pc
-COPY --link --from=x265 /usr/local/lib/libx265.a /usr/local/lib/libx265.a
-COPY --link --from=x265 /usr/local/include/x265*.h /usr/local/include/
-COPY --link --from=xavs2 /usr/local/lib/pkgconfig/xavs2.pc /usr/local/lib/pkgconfig/xavs2.pc
-COPY --link --from=xavs2 /usr/local/lib/libxavs2.a /usr/local/lib/libxavs2.a
-COPY --link --from=xavs2 /usr/local/include/xavs2*.h /usr/local/include/
-COPY --link --from=xvid /usr/local/lib/libxvidcore.* /usr/local/lib/
-COPY --link --from=xvid /usr/local/include/xvid.h /usr/local/include/xvid.h
-COPY --link --from=zimg /usr/local/lib/pkgconfig/zimg.pc /usr/local/lib/pkgconfig/zimg.pc
-COPY --link --from=zimg /usr/local/lib/libzimg.a /usr/local/lib/libzimg.a
-COPY --link --from=zimg /usr/local/include/zimg* /usr/local/include/
-COPY --link --from=ffmpeg_download /tmp/ffmpeg/ /tmp/ffmpeg/
+COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
+COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
+COPY --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
+COPY --from=aom /usr/local/lib/pkgconfig/aom.pc /usr/local/lib/pkgconfig/aom.pc
+COPY --from=aom /usr/local/lib/libaom.a /usr/local/lib/libaom.a
+COPY --from=aom /usr/local/include/aom/ /usr/local/include/aom/
+COPY --from=libaribb24 /usr/local/lib/pkgconfig/aribb24.pc /usr/local/lib/pkgconfig/aribb24.pc
+COPY --from=libaribb24 /usr/local/lib/libaribb24.a /usr/local/lib/libaribb24.a
+COPY --from=libaribb24 /usr/local/include/aribb24/ /usr/local/include/aribb24/
+COPY --from=libass /usr/local/lib/pkgconfig/libass.pc /usr/local/lib/pkgconfig/libass.pc
+COPY --from=libass /usr/local/lib/libass.a /usr/local/lib/libass.a
+COPY --from=libass /usr/local/include/ass/ /usr/local/include/ass/
+COPY --from=libbluray /usr/local/lib/pkgconfig/libbluray.pc /usr/local/lib/pkgconfig/libbluray.pc
+COPY --from=libbluray /usr/local/lib/libbluray.a /usr/local/lib/libbluray.a
+COPY --from=libbluray /usr/local/include/libbluray/ /usr/local/include/libbluray/
+COPY --from=dav1d /usr/local/lib/pkgconfig/dav1d.pc /usr/local/lib/pkgconfig/dav1d.pc
+COPY --from=dav1d /usr/local/lib/libdav1d.a /usr/local/lib/libdav1d.a
+COPY --from=dav1d /usr/local/include/dav1d/ /usr/local/include/dav1d/
+COPY --from=davs2 /usr/local/lib/pkgconfig/davs2.pc /usr/local/lib/pkgconfig/davs2.pc
+COPY --from=davs2 /usr/local/lib/libdavs2.a /usr/local/lib/libdavs2.a
+COPY --from=davs2 /usr/local/include/davs2* /usr/local/include/
+COPY --from=libgme /usr/local/lib/pkgconfig/libgme.pc /usr/local/lib/pkgconfig/libgme.pc
+COPY --from=libgme /usr/local/lib/libgme.a /usr/local/lib/libgme.a
+COPY --from=libgme /usr/local/include/gme/ /usr/local/include/gme/
+COPY --from=libgsm /usr/local/lib/libgsm.a /usr/local/lib/libgsm.a
+COPY --from=libgsm /usr/local/include/gsm/ /usr/local/include/gsm/
+COPY --from=kvazaar /usr/local/lib/pkgconfig/kvazaar.pc /usr/local/lib/pkgconfig/kvazaar.pc
+COPY --from=kvazaar /usr/local/lib/libkvazaar.a /usr/local/lib/libkvazaar.a
+COPY --from=kvazaar /usr/local/include/kvazaar.h /usr/local/include/kvazaar.h
+COPY --from=libmodplug /usr/local/lib/pkgconfig/libmodplug.pc /usr/local/lib/pkgconfig/libmodplug.pc
+COPY --from=libmodplug /usr/local/lib/libmodplug.a /usr/local/lib/libmodplug.a
+COPY --from=libmodplug /usr/local/include/libmodplug/ /usr/local/include/libmodplug/
+COPY --from=mp3lame /usr/local/lib/libmp3lame.a /usr/local/lib/libmp3lame.a
+COPY --from=mp3lame /usr/local/include/lame/ /usr/local/include/lame/
+COPY --from=libmysofa /usr/local/lib/pkgconfig/libmysofa.pc /usr/local/lib/pkgconfig/libmysofa.pc
+COPY --from=libmysofa /usr/local/lib/libmysofa.a /usr/local/lib/libmysofa.a
+COPY --from=libmysofa /usr/local/include/mysofa.h /usr/local/include/mysofa.h
+COPY --from=opencoreamr /usr/local/lib/libopencore-amr* /usr/local/lib/
+COPY --from=opencoreamr /usr/local/lib/pkgconfig/opencore-amr* /usr/local/lib/pkgconfig/
+COPY --from=opencoreamr /usr/local/include/opencore-amrnb/ /usr/local/include/opencore-amrnb/
+COPY --from=opencoreamr /usr/local/include/opencore-amrwb/ /usr/local/include/opencore-amrwb/
+COPY --from=openjpeg /usr/local/lib/pkgconfig/libopenjp2.pc /usr/local/lib/pkgconfig/libopenjp2.pc
+COPY --from=openjpeg /usr/local/lib/libopenjp2.a /usr/local/lib/libopenjp2.a
+COPY --from=openjpeg /usr/local/include/openjpeg-2.5/ /usr/local/include/openjpeg-2.5/
+COPY --from=opus /usr/local/lib/pkgconfig/opus.pc /usr/local/lib/pkgconfig/opus.pc
+COPY --from=opus /usr/local/lib/libopus.a /usr/local/lib/libopus.a
+COPY --from=opus /usr/local/include/opus/ /usr/local/include/opus/
+COPY --from=rav1e /usr/local/lib/pkgconfig/rav1e.pc /usr/local/lib/pkgconfig/rav1e.pc
+COPY --from=rav1e /usr/local/lib/librav1e.a /usr/local/lib/librav1e.a
+COPY --from=rav1e /usr/local/include/rav1e/ /usr/local/include/rav1e/
+COPY --from=rubberband /usr/local/lib/pkgconfig/rubberband.pc /usr/local/lib/pkgconfig/rubberband.pc
+COPY --from=rubberband /usr/local/lib/librubberband.a /usr/local/lib/librubberband.a
+COPY --from=rubberband /usr/local/include/rubberband/ /usr/local/include/rubberband/
+COPY --from=libshine /usr/local/lib/pkgconfig/shine.pc /usr/local/lib/pkgconfig/shine.pc
+COPY --from=libshine /usr/local/lib/libshine.a /usr/local/lib/libshine.a
+COPY --from=libshine /usr/local/include/shine/ /usr/local/include/shine/
+COPY --from=speex /usr/local/lib/pkgconfig/speex.pc /usr/local/lib/pkgconfig/speex.pc
+COPY --from=speex /usr/local/lib/libspeex.a /usr/local/lib/libspeex.a
+COPY --from=speex /usr/local/include/speex/ /usr/local/include/speex/
+COPY --from=svtav1 /usr/local/lib/pkgconfig/SvtAv1*.pc /usr/local/lib/pkgconfig/
+COPY --from=svtav1 /usr/local/lib/libSvtAv1*.a /usr/local/lib/
+COPY --from=svtav1 /usr/local/include/svt-av1/ /usr/local/include/svt-av1/
+COPY --from=ogg /usr/local/lib/pkgconfig/ogg.pc /usr/local/lib/pkgconfig/ogg.pc
+COPY --from=ogg /usr/local/lib/libogg.a /usr/local/lib/libogg.a
+COPY --from=ogg /usr/local/include/ogg/ /usr/local/include/ogg/
+COPY --from=theora /usr/local/lib/pkgconfig/theora*.pc /usr/local/lib/pkgconfig/
+COPY --from=theora /usr/local/lib/libtheora*.a /usr/local/lib/
+COPY --from=theora /usr/local/include/theora/ /usr/local/include/theora/
+COPY --from=twolame /usr/local/lib/pkgconfig/twolame.pc /usr/local/lib/pkgconfig/twolame.pc
+COPY --from=twolame /usr/local/lib/libtwolame.a /usr/local/lib/libtwolame.a
+COPY --from=twolame /usr/local/include/twolame.h /usr/local/include/twolame.h
+COPY --from=uavs3d /usr/local/lib/pkgconfig/uavs3d.pc /usr/local/lib/pkgconfig/uavs3d.pc
+COPY --from=uavs3d /usr/local/lib/libuavs3d.a /usr/local/lib/libuavs3d.a
+COPY --from=uavs3d /usr/local/include/uavs3d.h /usr/local/include/uavs3d.h
+COPY --from=vidstab /usr/local/lib/pkgconfig/vidstab.pc /usr/local/lib/pkgconfig/vidstab.pc
+COPY --from=vidstab /usr/local/lib/libvidstab.a /usr/local/lib/libvidstab.a
+COPY --from=vidstab /usr/local/include/vid.stab/ /usr/local/include/vid.stab/
+COPY --from=vorbis /usr/local/lib/pkgconfig/vorbis*.pc /usr/local/lib/pkgconfig/
+COPY --from=vorbis /usr/local/lib/libvorbis*.a /usr/local/lib/
+COPY --from=vorbis /usr/local/include/vorbis/ /usr/local/include/vorbis/
+COPY --from=libvpx /usr/local/lib/pkgconfig/vpx.pc /usr/local/lib/pkgconfig/vpx.pc
+COPY --from=libvpx /usr/local/lib/libvpx.a /usr/local/lib/libvpx.a
+COPY --from=libvpx /usr/local/include/vpx/ /usr/local/include/vpx/
+COPY --from=libwebp /usr/local/lib/pkgconfig/libwebp*.pc /usr/local/lib/pkgconfig/
+COPY --from=libwebp /usr/local/lib/libwebp*.a /usr/local/lib/
+COPY --from=libwebp /usr/local/include/webp/ /usr/local/include/webp/
+COPY --from=x264 /usr/local/lib/pkgconfig/x264.pc /usr/local/lib/pkgconfig/x264.pc
+COPY --from=x264 /usr/local/lib/libx264.a /usr/local/lib/libx264.a
+COPY --from=x264 /usr/local/include/x264*.h /usr/local/include/
+COPY --from=x265 /usr/local/lib/pkgconfig/x265.pc /usr/local/lib/pkgconfig/x265.pc
+COPY --from=x265 /usr/local/lib/libx265.a /usr/local/lib/libx265.a
+COPY --from=x265 /usr/local/include/x265*.h /usr/local/include/
+COPY --from=xavs2 /usr/local/lib/pkgconfig/xavs2.pc /usr/local/lib/pkgconfig/xavs2.pc
+COPY --from=xavs2 /usr/local/lib/libxavs2.a /usr/local/lib/libxavs2.a
+COPY --from=xavs2 /usr/local/include/xavs2*.h /usr/local/include/
+COPY --from=xvid /usr/local/lib/libxvidcore.* /usr/local/lib/
+COPY --from=xvid /usr/local/include/xvid.h /usr/local/include/xvid.h
+COPY --from=zimg /usr/local/lib/pkgconfig/zimg.pc /usr/local/lib/pkgconfig/zimg.pc
+COPY --from=zimg /usr/local/lib/libzimg.a /usr/local/lib/libzimg.a
+COPY --from=zimg /usr/local/include/zimg* /usr/local/include/
+COPY --from=ffmpeg_download /tmp/ffmpeg/ /tmp/ffmpeg/
 RUN \
   cd ffmpeg && \
 # sed changes --toolchain=hardened -pie to -static-pie
