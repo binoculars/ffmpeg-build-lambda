@@ -958,7 +958,10 @@ RUN apk add --no-cache \
   freetype-dev freetype-static \
   fribidi-dev fribidi-static \
   harfbuzz-dev harfbuzz-static \
-  fontconfig-dev fontconfig-static
+  fontconfig-dev fontconfig-static \
+  frei0r-plugins-dev \
+  vo-amrwbenc-dev vo-amrwbenc-static
+
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
 COPY --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
@@ -1082,6 +1085,7 @@ RUN \
   --disable-runtime-cpudetect \
   --enable-gpl \
   --enable-version3 \
+  --enable-frei0r \
   --enable-fontconfig \
   --enable-gray \
   --enable-iconv \
@@ -1114,6 +1118,7 @@ RUN \
   --enable-libuavs3d \
   --enable-libvidstab \
   --enable-libvmaf \
+  --enable-libvo-amrwbenc \
   --enable-libvorbis \
   --enable-libvpx \
   --enable-libwebp \
@@ -1131,6 +1136,7 @@ ARG VMAF_VERSION
 ARG AOM_VERSION
 ARG LIBARIBB24_VERSION
 ARG LIBASS_VERSION
+ARG LIBBLURAY_VERSION
 ARG DAV1D_VERSION
 ARG DAVS2_VERSION
 ARG LIBGME_COMMIT
@@ -1165,6 +1171,7 @@ RUN apk add --no-cache \
   jq
 RUN \
   EXPAT_VERSION=$(pkg-config --modversion expat) \
+  FREI0R_VERSION=$(pkg-config --modversion frei0r) \
   FFTW_VERSION=$(pkg-config --modversion fftw3) \
   FONTCONFIG_VERSION=$(pkg-config --modversion fontconfig)  \
   FREETYPE_VERSION=$(pkg-config --modversion freetype2)  \
@@ -1172,9 +1179,11 @@ RUN \
   LIBSAMPLERATE_VERSION=$(pkg-config --modversion samplerate) \
   LIBXML2_VERSION=$(pkg-config --modversion libxml-2.0) \
   SOXR_VERSION=$(pkg-config --modversion soxr) \
+  LIBVO_AMRWBENC_VERSION=$(pkg-config --modversion vo-amrwbenc) \
   jq -n \
   '{ \
   expat: env.EXPAT_VERSION, \
+  frei0r: env.FREI0R_VERSION, \
   ffmpeg: env.FFMPEG_VERSION, \
   fftw: env.FFTW_VERSION, \
   fontconfig: env.FONTCONFIG_VERSION, \
@@ -1208,6 +1217,7 @@ RUN \
   libuavs3d: env.UAVS3D_COMMIT, \
   libvidstab: env.VIDSTAB_VERSION, \
   libvmaf: env.VMAF_VERSION, \
+  libvo_amrwbenc: env.LIBVO_AMRWBENC_VERSION, \
   libvorbis: env.VORBIS_VERSION, \
   libvpx: env.VPX_VERSION, \
   libwebp: env.LIBWEBP_VERSION, \
