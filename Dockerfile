@@ -192,9 +192,9 @@ ARG X264_VERSION=baee400fa9ced6f5481a728138fed6e867b0ff7f
 # bump: x265 /X265_VERSION=([[:xdigit:]]+)/ gitrefs:https://bitbucket.org/multicoreware/x265_git.git|re:#^refs/heads/master$#|@commit
 # bump: x265 after ./hashupdate Dockerfile X265 $LATEST
 # bump: x265 link "Source diff $CURRENT..$LATEST" https://bitbucket.org/multicoreware/x265_git/branches/compare/$LATEST..$CURRENT#diff
-ARG X265_VERSION=931178347b3f73e40798fd5180209654536bbaa5
+ARG X265_VERSION=0b75c44c10e605fe9e9ebed58f04a46271131827
 ARG X265_URL="https://bitbucket.org/multicoreware/x265_git/get/$X265_VERSION.tar.bz2"
-ARG X265_SHA256=eb07c919a62d4a6724b44427844c214ab7ddf57c85b3ccf3f2b8111763ac2966
+ARG X265_SHA256=8aaf96bae0025c3678c3c04cf2e645af4ae0acb5520c890b80474e96b868f545
 # bump: xavs2 /XAVS2_VERSION=([\d.]+)/ https://github.com/pkuvcl/xavs2.git|^1
 # bump: xavs2 after ./hashupdate Dockerfile XAVS2 $LATEST
 # bump: xavs2 link "Release" https://github.com/pkuvcl/xavs2/releases/tag/$LATEST
