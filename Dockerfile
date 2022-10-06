@@ -960,7 +960,8 @@ RUN apk add --no-cache \
   harfbuzz-dev harfbuzz-static \
   fontconfig-dev fontconfig-static \
   frei0r-plugins-dev \
-  vo-amrwbenc-dev vo-amrwbenc-static
+  vo-amrwbenc-dev vo-amrwbenc-static \
+  ladspa-dev
 
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
@@ -1086,6 +1087,7 @@ RUN \
   --enable-gpl \
   --enable-version3 \
   --enable-frei0r \
+  --enable-ladspa \
   --enable-fontconfig \
   --enable-gray \
   --enable-iconv \
@@ -1173,6 +1175,7 @@ RUN \
   EXPAT_VERSION=$(pkg-config --modversion expat) \
   FREI0R_VERSION=$(pkg-config --modversion frei0r) \
   FFTW_VERSION=$(pkg-config --modversion fftw3) \
+  LADSPA_VERSION=$(apk info -a ladspa-dev | grep ladspa-dev | head -n1 | awk '{print $1}' | sed -e 's/ladspa-dev-//') \
   FONTCONFIG_VERSION=$(pkg-config --modversion fontconfig)  \
   FREETYPE_VERSION=$(pkg-config --modversion freetype2)  \
   FRIBIDI_VERSION=$(pkg-config --modversion fribidi)  \
@@ -1186,6 +1189,7 @@ RUN \
   frei0r: env.FREI0R_VERSION, \
   ffmpeg: env.FFMPEG_VERSION, \
   fftw: env.FFTW_VERSION, \
+  ladspa: env.LADSPA_VERSION, \
   fontconfig: env.FONTCONFIG_VERSION, \
   libaom: env.AOM_VERSION, \
   libaribb24: env.LIBARIBB24_VERSION, \
