@@ -961,8 +961,7 @@ RUN apk add --no-cache \
   fontconfig-dev fontconfig-static \
   frei0r-plugins-dev \
   vo-amrwbenc-dev vo-amrwbenc-static \
-  ladspa-dev \
-  libcaca-dev libcaca-static
+  ladspa-dev
 
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
@@ -1096,7 +1095,6 @@ RUN \
   --enable-libaribb24 \
   --enable-libass \
   --enable-libbluray \
-  --enable-libcaca \
   --enable-libdav1d \
   --enable-libdavs2 \
   --enable-libfreetype \
@@ -1181,7 +1179,6 @@ RUN \
   FONTCONFIG_VERSION=$(pkg-config --modversion fontconfig)  \
   FREETYPE_VERSION=$(pkg-config --modversion freetype2)  \
   FRIBIDI_VERSION=$(pkg-config --modversion fribidi)  \
-  LIBCACA_VERSION=$(pkg-config --modversion caca) \
   LIBSAMPLERATE_VERSION=$(pkg-config --modversion samplerate) \
   LIBXML2_VERSION=$(pkg-config --modversion libxml-2.0) \
   SOXR_VERSION=$(pkg-config --modversion soxr) \
@@ -1198,7 +1195,6 @@ RUN \
   libaribb24: env.LIBARIBB24_VERSION, \
   libass: env.LIBASS_VERSION, \
   libbluray: env.LIBBLURAY_VERSION, \
-  libcaca: env.LIBCACA_VERSION, \
   libdav1d: env.DAV1D_VERSION, \
   libdavs2: env.DAVS2_VERSION, \
   libfreetype: env.FREETYPE_VERSION, \
