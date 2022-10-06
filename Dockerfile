@@ -961,7 +961,8 @@ RUN apk add --no-cache \
   fontconfig-dev fontconfig-static \
   frei0r-plugins-dev \
   vo-amrwbenc-dev vo-amrwbenc-static \
-  ladspa-dev
+  ladspa-dev \
+  snappy snappy-dev snappy-static
 
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
@@ -1112,6 +1113,7 @@ RUN \
   --enable-librav1e \
   --enable-librubberband \
   --enable-libshine \
+  --enable-libsnappy \
   --enable-libsoxr \
   --enable-libspeex \
   --enable-libsvtav1 \
@@ -1183,6 +1185,7 @@ RUN \
   LIBXML2_VERSION=$(pkg-config --modversion libxml-2.0) \
   SOXR_VERSION=$(pkg-config --modversion soxr) \
   LIBVO_AMRWBENC_VERSION=$(pkg-config --modversion vo-amrwbenc) \
+  SNAPPY_VERSION=$(apk info -a snappy | head -n1 | awk '{print $1}' | sed -e 's/snappy-//') \
   jq -n \
   '{ \
   expat: env.EXPAT_VERSION, \
@@ -1214,6 +1217,7 @@ RUN \
   libsamplerate: env.LIBSAMPLERATE_VERSION, \
   libshine: env.LIBSHINE_VERSION, \
   libsoxr: env.SOXR_VERSION, \
+  libsnappy: env.SNAPPY_VERSION, \
   libspeex: env.SPEEX_VERSION, \
   libsvtav1: env.SVTAV1_VERSION, \
   libtheora: env.THEORA_VERSION, \
