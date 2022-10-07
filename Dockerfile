@@ -959,10 +959,8 @@ RUN apk add --no-cache \
   fribidi-dev fribidi-static \
   harfbuzz-dev harfbuzz-static \
   fontconfig-dev fontconfig-static \
-  frei0r-plugins-dev \
   vo-amrwbenc-dev vo-amrwbenc-static \
-  ladspa-dev \
-  snappy snappy-dev snappy-static
+  snappy-dev snappy-static
 
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
@@ -1087,8 +1085,6 @@ RUN \
   --disable-runtime-cpudetect \
   --enable-gpl \
   --enable-version3 \
-  --enable-frei0r \
-  --enable-ladspa \
   --enable-fontconfig \
   --enable-gray \
   --enable-iconv \
@@ -1175,12 +1171,10 @@ RUN apk add --no-cache \
   jq
 RUN \
   EXPAT_VERSION=$(pkg-config --modversion expat) \
-  FREI0R_VERSION=$(pkg-config --modversion frei0r) \
   FFTW_VERSION=$(pkg-config --modversion fftw3) \
-  LADSPA_VERSION=$(apk info -a ladspa-dev | grep ladspa-dev | head -n1 | awk '{print $1}' | sed -e 's/ladspa-dev-//') \
-  FONTCONFIG_VERSION=$(pkg-config --modversion fontconfig)  \
-  FREETYPE_VERSION=$(pkg-config --modversion freetype2)  \
-  FRIBIDI_VERSION=$(pkg-config --modversion fribidi)  \
+  FONTCONFIG_VERSION=$(pkg-config --modversion fontconfig) \
+  FREETYPE_VERSION=$(pkg-config --modversion freetype2) \
+  FRIBIDI_VERSION=$(pkg-config --modversion fribidi) \
   LIBSAMPLERATE_VERSION=$(pkg-config --modversion samplerate) \
   LIBXML2_VERSION=$(pkg-config --modversion libxml-2.0) \
   SOXR_VERSION=$(pkg-config --modversion soxr) \
@@ -1189,10 +1183,8 @@ RUN \
   jq -n \
   '{ \
   expat: env.EXPAT_VERSION, \
-  frei0r: env.FREI0R_VERSION, \
   ffmpeg: env.FFMPEG_VERSION, \
   fftw: env.FFTW_VERSION, \
-  ladspa: env.LADSPA_VERSION, \
   fontconfig: env.FONTCONFIG_VERSION, \
   libaom: env.AOM_VERSION, \
   libaribb24: env.LIBARIBB24_VERSION, \
