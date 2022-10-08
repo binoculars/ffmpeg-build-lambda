@@ -265,7 +265,8 @@ RUN \
   wget $WGET_OPTS -O vmaf.tar.gz "$VMAF_URL" && \
   echo "$VMAF_SHA256  vmaf.tar.gz" | sha256sum --status -c - && \
   mkdir vmaf && \
-  tar xf vmaf.tar.gz -C vmaf --strip-components=1
+  tar xf vmaf.tar.gz -C vmaf --strip-components=1 && \
+  rm vmaf.tar.gz
 
 # before aom as libvmaf uses it
 FROM builder AS vmaf
@@ -316,7 +317,8 @@ RUN \
   wget $WGET_OPTS -O libaribb24.tar.gz ${LIBARIBB24_URL} && \
   echo "$LIBARIBB24_SHA256  libaribb24.tar.gz" | sha256sum --status -c - && \
   mkdir libaribb24 && \
-  tar xf libaribb24.tar.gz -C libaribb24 --strip-components=1
+  tar xf libaribb24.tar.gz -C libaribb24 --strip-components=1 && \
+  rm libaribb24.tar.gz
 
 FROM builder AS libaribb24
 COPY --from=libaribb24_download /tmp/libaribb24/ /tmp/libaribb24/
@@ -335,7 +337,8 @@ RUN \
   wget $WGET_OPTS -O libass.tar.gz "$LIBASS_URL" && \
   echo "$LIBASS_SHA256  libass.tar.gz" | sha256sum --status -c - && \
   mkdir libass && \
-  tar xf libass.tar.gz -C libass --strip-components=1
+  tar xf libass.tar.gz -C libass --strip-components=1 && \
+  rm libass.tar.gz
 
 FROM builder AS libass
 COPY --from=libass_download /tmp/libass/ /tmp/libass/
@@ -358,7 +361,8 @@ RUN \
   mkdir libbluray && \
   tar xf libbluray.tar.gz -C libbluray --strip-components=1 && \
   cd libbluray && \
-  git clone https://code.videolan.org/videolan/libudfread.git contrib/libudfread
+  git clone https://code.videolan.org/videolan/libudfread.git contrib/libudfread && \
+  rm /tmp/libbluray.tar.gz
 
 FROM builder AS libbluray
 COPY --from=libbluray_download /tmp/libbluray/ /tmp/libbluray/
@@ -378,7 +382,8 @@ RUN \
   wget $WGET_OPTS -O dav1d.tar.gz "$DAV1D_URL" && \
   echo "$DAV1D_SHA256  dav1d.tar.gz" | sha256sum --status -c - && \
   mkdir dav1d && \
-  tar xf dav1d.tar.gz -C dav1d --strip-components=1
+  tar xf dav1d.tar.gz -C dav1d --strip-components=1 && \
+  rm dav1d.tar.gz
 
 FROM builder AS dav1d
 COPY --from=dav1d_download /tmp/dav1d/ /tmp/dav1d/
@@ -394,7 +399,8 @@ RUN \
   wget $WGET_OPTS -O davs2.tar.gz "$DAVS2_URL" && \
   echo "$DAVS2_SHA256  davs2.tar.gz" | sha256sum --status -c - && \
   mkdir davs2 && \
-  tar xf davs2.tar.gz -C davs2 --strip-components=1
+  tar xf davs2.tar.gz -C davs2 --strip-components=1 && \
+  rm davs2.tar.gz
 
 FROM builder AS davs2
 COPY --from=davs2_download /tmp/davs2/ /tmp/davs2/
@@ -453,7 +459,8 @@ RUN \
   wget $WGET_OPTS -O kvazaar.tar.gz "$KVAZAAR_URL" && \
   echo "$KVAZAAR_SHA256  kvazaar.tar.gz" | sha256sum --status -c - && \
   mkdir kvazaar && \
-  tar xf kvazaar.tar.gz -C kvazaar --strip-components=1
+  tar xf kvazaar.tar.gz -C kvazaar --strip-components=1 && \
+  rm kvazaar.tar.gz
 
 FROM builder AS kvazaar
 COPY --from=kvazaar_download /tmp/kvazaar/ /tmp/kvazaar/
@@ -470,7 +477,8 @@ RUN \
   wget $WGET_OPTS -O libmodplug.tar.gz "$LIBMODPLUG_URL" && \
   echo "$LIBMODPLUG_SHA256  libmodplug.tar.gz" | sha256sum --status -c - && \
   mkdir libmodplug && \
-  tar xf libmodplug.tar.gz -C libmodplug --strip-components=1
+  tar xf libmodplug.tar.gz -C libmodplug --strip-components=1 && \
+  rm libmodplug.tar.gz
 
 FROM builder AS libmodplug
 COPY --from=libmodplug_download /tmp/libmodplug/ /tmp/libmodplug/
@@ -486,7 +494,8 @@ RUN \
   wget $WGET_OPTS -O lame.tar.gz "$MP3LAME_URL" && \
   echo "$MP3LAME_SHA256  lame.tar.gz" | sha256sum --status -c - && \
   mkdir lame && \
-  tar xf lame.tar.gz -C lame --strip-components=1
+  tar xf lame.tar.gz -C lame --strip-components=1 && \
+  rm lame.tar.gz
 
 FROM builder AS mp3lame
 COPY --from=mp3lame_download /tmp/lame/ /tmp/lame/
@@ -502,7 +511,8 @@ RUN \
   wget $WGET_OPTS -O libmysofa.tar.gz "$LIBMYSOFA_URL" && \
   echo "$LIBMYSOFA_SHA256  libmysofa.tar.gz" | sha256sum --status -c - && \
   mkdir libmysofa && \
-  tar xf libmysofa.tar.gz -C libmysofa --strip-components=1
+  tar xf libmysofa.tar.gz -C libmysofa --strip-components=1 && \
+  rm libmysofa.tar.gz
 
 FROM builder AS libmysofa
 COPY --from=libmysofa_download /tmp/libmysofa/ /tmp/libmysofa/
@@ -527,7 +537,8 @@ RUN \
   wget $WGET_OPTS -O opencoreamr.tar.gz "$OPENCOREAMR_URL" && \
   echo "$OPENCOREAMR_SHA256  opencoreamr.tar.gz" | sha256sum --status -c - && \
   mkdir opencoreamr && \
-  tar xf opencoreamr.tar.gz -C opencoreamr --strip-components=1
+  tar xf opencoreamr.tar.gz -C opencoreamr --strip-components=1 && \
+  rm opencoreamr.tar.gz
 
 FROM builder AS opencoreamr
 COPY --from=opencoreamr_download /tmp/opencoreamr/ /tmp/opencoreamr/
@@ -543,7 +554,8 @@ RUN \
   wget $WGET_OPTS -O openjpeg.tar.gz "$OPENJPEG_URL" && \
   echo "$OPENJPEG_SHA256  openjpeg.tar.gz" | sha256sum --status -c - && \
   mkdir openjpeg && \
-  tar xf openjpeg.tar.gz -C openjpeg --strip-components=1
+  tar xf openjpeg.tar.gz -C openjpeg --strip-components=1 && \
+  rm openjpeg.tar.gz
 
 FROM builder AS openjpeg
 COPY --from=openjpeg_download /tmp/openjpeg/ /tmp/openjpeg/
@@ -569,7 +581,8 @@ RUN \
   wget $WGET_OPTS -O opus.tar.gz "$OPUS_URL" && \
   echo "$OPUS_SHA256  opus.tar.gz" | sha256sum --status -c - && \
   mkdir opus && \
-  tar xf opus.tar.gz -C opus --strip-components=1
+  tar xf opus.tar.gz -C opus --strip-components=1 && \
+  rm opus.tar.gz
 
 FROM builder AS opus
 COPY --from=opus_download /tmp/opus/ /tmp/opus/
@@ -585,7 +598,8 @@ RUN \
   wget $WGET_OPTS -O rav1e.tar.gz "$RAV1E_URL" && \
   echo "$RAV1E_SHA256  rav1e.tar.gz" | sha256sum --status -c - && \
   mkdir rav1e && \
-  tar xf rav1e.tar.gz -C rav1e --strip-components=1
+  tar xf rav1e.tar.gz -C rav1e --strip-components=1 && \
+  rm rav1e.tar.gz
 
 FROM builder AS rav1e
 COPY --from=rav1e_download /tmp/rav1e/ /tmp/rav1e/
@@ -607,7 +621,8 @@ RUN \
   wget $WGET_OPTS -O rubberband.tar.bz2 "$RUBBERBAND_URL" && \
   echo "$RUBBERBAND_SHA256  rubberband.tar.bz2" | sha256sum --status -c - && \
   mkdir rubberband && \
-  tar xf rubberband.tar.bz2 -C rubberband --strip-components=1
+  tar xf rubberband.tar.bz2 -C rubberband --strip-components=1 && \
+  rm rubberband.tar.bz2
 
 FROM builder AS rubberband
 COPY --from=rubberband_download /tmp/rubberband/ /tmp/rubberband/
@@ -627,7 +642,8 @@ RUN \
   wget $WGET_OPTS -O libshine.tar.gz "$LIBSHINE_URL" && \
   echo "$LIBSHINE_SHA256  libshine.tar.gz" | sha256sum --status -c - && \
   mkdir libshine && \
-  tar xf libshine.tar.gz -C libshine --strip-components=1
+  tar xf libshine.tar.gz -C libshine --strip-components=1 && \
+  rm libshine.tar.gz
 
 FROM builder AS libshine
 COPY --from=libshine_download /tmp/libshine/ /tmp/libshine/
@@ -643,7 +659,8 @@ RUN \
   wget $WGET_OPTS -O speex.tar.gz "$SPEEX_URL" && \
   echo "$SPEEX_SHA256  speex.tar.gz" | sha256sum --status -c - && \
   mkdir speex && \
-  tar xf speex.tar.gz -C speex --strip-components=1
+  tar xf speex.tar.gz -C speex --strip-components=1 && \
+  rm speex.tar.gz
 
 FROM builder AS speex
 COPY --from=speex_download /tmp/speex/ /tmp/speex/
@@ -660,7 +677,8 @@ RUN \
   wget $WGET_OPTS -O svtav1.tar.bz2 "$SVTAV1_URL" && \
   echo "$SVTAV1_SHA256  svtav1.tar.bz2" | sha256sum --status -c - && \
   mkdir svtav1 && \
-  tar xf svtav1.tar.bz2 -C svtav1 --strip-components=1
+  tar xf svtav1.tar.bz2 -C svtav1 --strip-components=1 && \
+  rm svtav1.tar.bz2
 
 FROM builder AS svtav1
 COPY --from=svtav1_download /tmp/svtav1/ /tmp/svtav1/
@@ -682,7 +700,8 @@ RUN \
   wget $WGET_OPTS -O libogg.tar.gz "$OGG_URL" && \
   echo "$OGG_SHA256  libogg.tar.gz" | sha256sum --status -c - && \
   mkdir ogg && \
-  tar xf libogg.tar.gz -C ogg --strip-components=1
+  tar xf libogg.tar.gz -C ogg --strip-components=1 && \
+  rm libogg.tar.gz
 
 # has to be before theora and vorbis
 FROM builder AS ogg
@@ -699,7 +718,8 @@ RUN \
   wget $WGET_OPTS -O libtheora.tar.bz2 "$THEORA_URL" && \
   echo "$THEORA_SHA256  libtheora.tar.bz2" | sha256sum --status -c - && \
   mkdir theora && \
-  tar xf libtheora.tar.bz2 -C theora --strip-components=1
+  tar xf libtheora.tar.bz2 -C theora --strip-components=1 && \
+  rm libtheora.tar.bz2
 
 FROM builder AS theora
 COPY --from=theora_download /tmp/theora/ /tmp/theora/
@@ -720,7 +740,8 @@ RUN \
   wget $WGET_OPTS -O twolame.tar.gz "$TWOLAME_URL" && \
   echo "$TWOLAME_SHA256  twolame.tar.gz" | sha256sum --status -c - && \
   mkdir twolame && \
-  tar xf twolame.tar.gz -C twolame --strip-components=1
+  tar xf twolame.tar.gz -C twolame --strip-components=1 && \
+  rm twolame.tar.gz
 
 FROM builder AS twolame
 COPY --from=twolame_download /tmp/twolame/ /tmp/twolame/
@@ -758,7 +779,8 @@ RUN \
   wget $WGET_OPTS -O vid.stab.tar.gz "$VIDSTAB_URL" && \
   echo "$VIDSTAB_SHA256  vid.stab.tar.gz" | sha256sum --status -c - && \
   mkdir vidstab && \
-  tar xf vid.stab.tar.gz -C vidstab --strip-components=1
+  tar xf vid.stab.tar.gz -C vidstab --strip-components=1 && \
+  rm vid.stab.tar.gz
 
 FROM builder AS vidstab
 COPY --from=vidstab_download /tmp/vidstab/ /tmp/vidstab/
@@ -786,7 +808,8 @@ RUN \
   wget $WGET_OPTS -O libvorbis.tar.gz "$VORBIS_URL" && \
   echo "$VORBIS_SHA256  libvorbis.tar.gz" | sha256sum --status -c - && \
   mkdir vorbis && \
-  tar xf libvorbis.tar.gz -C vorbis --strip-components=1
+  tar xf libvorbis.tar.gz -C vorbis --strip-components=1 && \
+  rm libvorbis.tar.gz
 
 FROM builder AS vorbis
 COPY --from=vorbis_download /tmp/vorbis/ /tmp/vorbis/
@@ -805,7 +828,8 @@ RUN \
   wget $WGET_OPTS -O libvpx.tar.gz "$VPX_URL" && \
   echo "$VPX_SHA256  libvpx.tar.gz" | sha256sum --status -c - && \
   mkdir libvpx && \
-  tar xf libvpx.tar.gz -C libvpx --strip-components=1
+  tar xf libvpx.tar.gz -C libvpx --strip-components=1 && \
+  rm libvpx.tar.gz
 
 FROM builder AS libvpx
 COPY --from=libvpx_download /tmp/libvpx/ /tmp/libvpx/
@@ -821,7 +845,8 @@ RUN \
   wget $WGET_OPTS -O libwebp.tar.gz "$LIBWEBP_URL" && \
   echo "$LIBWEBP_SHA256  libwebp.tar.gz" | sha256sum --status -c - && \
   mkdir libwebp && \
-  tar xf libwebp.tar.gz -C libwebp --strip-components=1
+  tar xf libwebp.tar.gz -C libwebp --strip-components=1 && \
+  rm libwebp.tar.gz
 
 FROM builder AS libwebp
 COPY --from=libwebp_download /tmp/libwebp/ /tmp/libwebp/
@@ -853,7 +878,8 @@ RUN \
   wget $WGET_OPTS -O x265_git.tar.bz2 "$X265_URL" && \
   echo "$X265_SHA256  x265_git.tar.bz2" | sha256sum --status -c - && \
   mkdir x265 && \
-  tar xf x265_git.tar.bz2 -C x265 --strip-components=1
+  tar xf x265_git.tar.bz2 -C x265 --strip-components=1 && \
+  rm x265_git.tar.bz2
 
 FROM builder AS x265
 COPY --from=x265_download /tmp/x265/ /tmp/x265/
@@ -883,7 +909,8 @@ RUN \
   wget $WGET_OPTS -O xavs2.tar.gz "$XAVS2_URL" && \
   echo "$XAVS2_SHA256  xavs2.tar.gz" | sha256sum --status -c - && \
   mkdir xavs2 && \
-  tar xf xavs2.tar.gz -C xavs2 --strip-components=1
+  tar xf xavs2.tar.gz -C xavs2 --strip-components=1 && \
+  rm xavs2.tar.gz
 
 FROM builder AS xavs2
 COPY --from=xavs2_download /tmp/xavs2/ /tmp/xavs2/
@@ -900,7 +927,8 @@ RUN \
   wget $WGET_OPTS -O libxvid.tar.gz "$XVID_URL" && \
   echo "$XVID_SHA256  libxvid.tar.gz" | sha256sum --status -c - && \
   mkdir xvid && \
-  tar xf libxvid.tar.gz -C xvid --strip-components=1
+  tar xf libxvid.tar.gz -C xvid --strip-components=1 && \
+  rm libxvid.tar.gz
 
 FROM builder AS xvid
 COPY --from=xvid_download /tmp/xvid/ /tmp/xvid/
@@ -916,7 +944,8 @@ RUN \
   wget $WGET_OPTS -O zimg.tar.gz "$ZIMG_URL" && \
   echo "$ZIMG_SHA256  zimg.tar.gz" | sha256sum --status -c - && \
   mkdir zimg && \
-  tar xf zimg.tar.gz -C zimg --strip-components=1
+  tar xf zimg.tar.gz -C zimg --strip-components=1 && \
+  rm zimg.tar.gz
 
 FROM builder AS zimg
 COPY --from=zimg_download /tmp/zimg/ /tmp/zimg/
@@ -933,7 +962,8 @@ RUN \
   wget $WGET_OPTS -O ffmpeg.tar.bz2 "$FFMPEG_URL" && \
   echo "$FFMPEG_SHA256  ffmpeg.tar.bz2" | sha256sum --status -c - && \
   mkdir ffmpeg && \
-  tar xf ffmpeg.tar.bz2 -C ffmpeg --strip-components=1
+  tar xf ffmpeg.tar.bz2 -C ffmpeg --strip-components=1 && \
+  rm ffmpeg.tar.bz2
 
 FROM builder AS ffmpeg
 RUN apk add --no-cache \
