@@ -202,7 +202,6 @@ ARG X265_SHA256=8aaf96bae0025c3678c3c04cf2e645af4ae0acb5520c890b80474e96b868f545
 ARG XAVS2_VERSION=1.4
 ARG XAVS2_URL="https://github.com/pkuvcl/xavs2/archive/refs/tags/$XAVS2_VERSION.tar.gz"
 ARG XAVS2_SHA256=1e6d731cd64cb2a8940a0a3fd24f9c2ac3bb39357d802432a47bc20bad52c6ce
-
 # http://websvn.xvid.org/cvs/viewvc.cgi/trunk/xvidcore/build/generic/configure.in?revision=2146&view=markup
 # bump: xvid /XVID_VERSION=([\d.]+)/ svn:http://anonymous:@svn.xvid.org|/^release-(.*)$/|/_/./|^1
 # bump: xvid after ./hashupdate Dockerfile XVID $LATEST
@@ -961,7 +960,6 @@ RUN apk add --no-cache \
   fontconfig-dev fontconfig-static \
   vo-amrwbenc-dev vo-amrwbenc-static \
   snappy-dev snappy-static
-
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
 COPY --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
