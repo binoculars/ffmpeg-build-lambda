@@ -292,9 +292,8 @@ COPY --from=aom_download /tmp/aom/ /tmp/aom/
 COPY --from=vmaf /usr/local/lib/pkgconfig/libvmaf.pc /usr/local/lib/pkgconfig/libvmaf.pc
 COPY --from=vmaf /usr/local/lib/libvmaf.a /usr/local/lib/libvmaf.a
 COPY --from=vmaf /usr/local/include/libvmaf/ /usr/local/include/libvmaf/
-WORKDIR /tmp/aom
+WORKDIR /tmp/aom/build_tmp
 RUN \
-  mkdir build_tmp && cd build_tmp && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -419,9 +418,8 @@ RUN \
 
 FROM builder AS libgme
 COPY --from=libgme_download /tmp/libgme/ /tmp/libgme/
-WORKDIR /tmp/libgme
+WORKDIR /tmp/libgme/build
 RUN \
-  mkdir build && cd build && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -559,9 +557,8 @@ RUN \
 
 FROM builder AS openjpeg
 COPY --from=openjpeg_download /tmp/openjpeg/ /tmp/openjpeg/
-WORKDIR /tmp/openjpeg
+WORKDIR /tmp/openjpeg/build
 RUN \
-  mkdir build && cd build && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -759,11 +756,10 @@ RUN \
 
 FROM builder AS uavs3d
 COPY --from=uavs3d_download /tmp/uavs3d/ /tmp/uavs3d/
-WORKDIR /tmp/uavs3d
+WORKDIR /tmp/uavs3d/build/linux
 RUN \
   # Removes BIT_DEPTH 10 to be able to build on other platforms. 10 was overkill anyways.
   #  sed -i 's/define BIT_DEPTH 8/define BIT_DEPTH 10/' source/decore/com_def.h && \
-  mkdir build/linux && cd build/linux && \
   cmake \
     -G"Unix Makefiles" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
@@ -784,9 +780,8 @@ RUN \
 
 FROM builder AS vidstab
 COPY --from=vidstab_download /tmp/vidstab/ /tmp/vidstab/
-WORKDIR /tmp/vidstab
+WORKDIR /tmp/vidstab/build
 RUN \
-  mkdir build && cd build && \
   # This line workarounds the issue that happens when the image builds in emulated (buildx) arm64 environment.
   # Since in emulated container the /proc is mounted from the host, the cmake not able to detect CPU features correctly.
   sed -i 's/include (FindSSE)/if(CMAKE_SYSTEM_ARCH MATCHES "amd64")\ninclude (FindSSE)\nendif()/' ../CMakeLists.txt && \
