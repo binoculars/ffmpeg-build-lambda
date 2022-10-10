@@ -948,6 +948,7 @@ FROM builder AS zimg
 COPY --from=zimg_download /tmp/zimg/ /tmp/zimg/
 WORKDIR /tmp/zimg
 RUN \
+  apk add --no-cache linux-headers && \
   ./autogen.sh && \
   ./configure --disable-shared --enable-static && \
   make -j$(nproc) install
