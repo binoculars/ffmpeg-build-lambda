@@ -602,7 +602,9 @@ FROM builder AS rav1e
 COPY --from=rav1e_download /tmp/rav1e/ /tmp/rav1e/
 WORKDIR /tmp/rav1e
 RUN apk add --no-cache \
-  rust cargo
+  rust cargo git
+# Fails on fetch without CARGO_NET_GIT_FETCH_WITH_CLI=true and git installed
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 # debug builds a bit faster and we don't care about runtime speed
 RUN cargo install --debug --version 0.9.5 cargo-c
 RUN \
