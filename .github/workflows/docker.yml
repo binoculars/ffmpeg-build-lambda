@@ -17,6 +17,14 @@ jobs:
       contents: read
       packages: write
 
+    strategy:
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+
+    timeout-minutes: 720
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3.1.0
@@ -44,7 +52,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
