@@ -1107,7 +1107,6 @@ RUN \
   --disable-ffplay \
   --enable-static \
   --enable-small \
-  --cpu="sandybridge" \
   --disable-runtime-cpudetect \
   --enable-gpl \
   --enable-version3 \
